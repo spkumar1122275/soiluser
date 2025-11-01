@@ -2,14 +2,18 @@ package com.campuscoders.posterminalapp.data.repository.locale
 
 import com.campuscoders.posterminalapp.data.locale.MainUserDao
 import com.campuscoders.posterminalapp.data.locale.TerminalUsersDao
+import com.campuscoders.posterminalapp.data.remote.api.AuthApiService
+import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
     private val mainUserDao: MainUserDao,
-    private val terminalUsersDao: TerminalUsersDao
+    private val terminalUsersDao: TerminalUsersDao,
+    private val authApiService: AuthApiService
 ): LoginRepository {
 
     override suspend fun saveMainUserToDatabase(mainUser: MainUser): Long {
@@ -50,5 +54,14 @@ class LoginRepositoryImpl @Inject constructor(
 
     override suspend fun updateTerminalUserPassword(vknTckn: String, newPassword: String): Int {
         return terminalUsersDao.updateTerminalUserPassword(vknTckn, newPassword)
+    }
+
+    override suspend fun loginWithApi(
+        terminalId: String,
+        taxId: String,
+        memberId: String,
+        password: String
+    ): Response<LoginResponse> {
+        return authApiService.login(terminalId, taxId, memberId, password)
     }
 }

@@ -1,10 +1,13 @@
 package com.campuscoders.posterminalapp.domain.repository.locale
 
+import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
+import retrofit2.Response
 
 interface LoginRepository {
 
+    // Local Database Methods
     suspend fun saveMainUserToDatabase(mainUser: MainUser): Long
 
     suspend fun fetchMainUserFromDatabase(terminalId: String): MainUser?
@@ -24,4 +27,12 @@ interface LoginRepository {
     suspend fun updateMainUserPassword(vknTckn: String, newPassword: String): Int
 
     suspend fun updateTerminalUserPassword(vknTckn: String, newPassword: String): Int
+
+    // API Methods
+    suspend fun loginWithApi(
+        terminalId: String,
+        taxId: String,
+        memberId: String,
+        password: String
+    ): Response<LoginResponse>
 }

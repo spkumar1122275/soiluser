@@ -8,6 +8,7 @@ import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import com.campuscoders.posterminalapp.domain.use_case.login.FetchMainUserUseCase
 import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserUseCase
+import com.campuscoders.posterminalapp.domain.use_case.login.LoginWithApiUseCase
 import com.campuscoders.posterminalapp.domain.use_case.login.SaveMainUserUseCase
 import com.campuscoders.posterminalapp.domain.use_case.login.SaveTerminalUserUseCase
 import com.campuscoders.posterminalapp.utils.Constants
@@ -34,7 +35,8 @@ class LoginViewModel @Inject constructor(
     private val saveMainUserUseCase: SaveMainUserUseCase,
     private val fetchMainUserUseCase: FetchMainUserUseCase,
     private val saveTerminalUserUseCase: SaveTerminalUserUseCase,
-    private val fetchTerminalUserUseCase: FetchTerminalUserUseCase
+    private val fetchTerminalUserUseCase: FetchTerminalUserUseCase,
+    private val loginWithApiUseCase: LoginWithApiUseCase
 ): ViewModel() {
 
     interface MainUserCallBack {
@@ -119,25 +121,44 @@ class LoginViewModel @Inject constructor(
 
     fun controlMainUser(mainUser: MainUser) {
         _statusControlMainUser.value = Resource.Loading(null)
-        fetchMainUser(mainUser.mainUserTerminalId!!, object : MainUserCallBack {
-            override fun onMainUserFetched(mainUserFromDb: MainUser?) {
-                if (mainUserFromDb != null) {
-                    if (mainUserFromDb.mainUserTerminalId != mainUser.mainUserTerminalId ||
-                        mainUserFromDb.mainUserVknTckn != mainUser.mainUserVknTckn ||
-                        mainUserFromDb.mainUserUyeIsyeriNo != mainUser.mainUserUyeIsyeriNo ||
-                        mainUserFromDb.mainUserPassword != mainUser.mainUserPassword) {
-                        _statusControlMainUser.value = Resource.Error(false, "NOT MATCHED!")
-                    } else {
+        viewModelScope.launch {
+            // Use API for authentication
+            val response = loginWithApiUseCase.executeLoginWithApi(
+                terminalId = mainUser.mainUserTerminalId ?: "",
+                taxId = mainUser.mainUserVknTckn ?: "",
+                memberId = mainUser.mainUserUyeIsyeriNo ?: "",
+                password = mainUser.mainUserPassword ?: ""
+            )
+            
+            when (response) {
+                is Resource.Success -> {
+                    val loginResponse = response.data
+                    val userData = loginResponse?.user
+                    if (userData != null) {
+                        // Save user to local database for caching
+                        val userToSave = MainUser(
+                            mainUserTerminalId = userData.terminalId,
+                            mainUserVknTckn = userData.taxId,
+                            mainUserUyeIsyeriNo = userData.memberStore,
+                            mainUserPassword = mainUser.mainUserPassword,
+                            mainUserCellphoneNumber = userData.cellphoneNumber,
+                            mainUserFirstName = userData.firstName,
+                            mainUserLastName = userData.lastName
+                        )
+                        saveMainUserUseCase.executeSaveMainUser(userToSave)
+                        
                         _statusControlMainUser.value = Resource.Success(true)
+                    } else {
+                        _statusControlMainUser.value = Resource.Error(false, "Invalid response from server")
                     }
-                } else {
-                    _statusControlMainUser.value = Resource.Error(false, "MainUserFromDb is null")
+                }
+                is Resource.Error -> {
+                    _statusControlMainUser.value = Resource.Error(false, response.message ?: "Authentication failed")
+                }
+                is Resource.Loading -> {
+                    _statusControlMainUser.value = Resource.Loading(null)
                 }
             }
-
-            override fun onError(message: String) {
-                _statusControlMainUser.value = Resource.Error(false, message)
-            }
-        })
+        }
     }
 }

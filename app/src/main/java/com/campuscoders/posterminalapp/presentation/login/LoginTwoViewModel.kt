@@ -11,6 +11,7 @@ import com.campuscoders.posterminalapp.domain.use_case.login.FetchMainUserPasswo
 import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserByMemberStoreIdUseCase
 import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserPasswordUseCase
 import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserUseCase
+import com.campuscoders.posterminalapp.domain.use_case.login.LoginWithApiUseCase
 import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
 import com.campuscoders.posterminalapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,8 @@ class LoginTwoViewModel @Inject constructor(
     private val fetchMainUserPasswordUseCase: FetchMainUserPasswordUseCase,
     private val fetchTerminalUserPasswordUseCase: FetchTerminalUserPasswordUseCase,
     private val fetchTerminalUserUseCase: FetchTerminalUserUseCase,
-    private val fetchTerminalUserByMemberStoreIdUseCase: FetchTerminalUserByMemberStoreIdUseCase
+    private val fetchTerminalUserByMemberStoreIdUseCase: FetchTerminalUserByMemberStoreIdUseCase,
+    private val loginWithApiUseCase: LoginWithApiUseCase
 ): ViewModel() {
 
     interface PasswordCallback {
@@ -146,44 +148,64 @@ class LoginTwoViewModel @Inject constructor(
     }
 
     private fun controlMainUserPassword(memberStoreId: String, password: String, context: Context) {
-        fetchMainUserPassword(memberStoreId, object : PasswordCallback {
-            override fun onPasswordFetched(passwordFromCallBack: String?) {
-                if (passwordFromCallBack != null) {
-                    if (passwordFromCallBack == password) {
+        viewModelScope.launch {
+            // Use API for authentication
+            val response = loginWithApiUseCase.executeLoginWithApi(
+                terminalId = "", // Terminal ID not needed for manager login
+                taxId = "", // Tax ID will be fetched from API response
+                memberId = memberStoreId,
+                password = password
+            )
+            
+            when (response) {
+                is Resource.Success -> {
+                    val loginResponse = response.data
+                    if (loginResponse != null) {
                         _statusControlPassword.value = Resource.Success(true)
                         val customSharedPreferences = CustomSharedPreferences(context)
                         customSharedPreferences.setMainUserLoginRememberMeManager(false, context)
                     } else {
                         _statusControlPassword.value = Resource.Error(false, context.getString(R.string.not_matched))
                     }
-                } else {
-                    _statusControlPassword.value = Resource.Error(false,context.getString(R.string.pass_db_null))
+                }
+                is Resource.Error -> {
+                    _statusControlPassword.value = Resource.Error(false, response.message ?: context.getString(R.string.not_matched))
+                }
+                is Resource.Loading -> {
+                    _statusControlPassword.value = Resource.Loading(null)
                 }
             }
-            override fun onError(message: String) {
-                _statusControlPassword.value = Resource.Error(false,message)
-            }
-        })
+        }
     }
 
     private fun controlTerminalUserPassword(terminalId: String, password: String, context: Context) {
-        fetchTerminalUserPassword(terminalId, object : PasswordCallback {
-            override fun onPasswordFetched(passwordFromCallBack: String?) {
-                if (passwordFromCallBack != null) {
-                    if (passwordFromCallBack == password) {
+        viewModelScope.launch {
+            // Use API for authentication
+            val response = loginWithApiUseCase.executeLoginWithApi(
+                terminalId = terminalId,
+                taxId = "", // Tax ID will be fetched from API response
+                memberId = "", // Member ID not needed for cashier login
+                password = password
+            )
+            
+            when (response) {
+                is Resource.Success -> {
+                    val loginResponse = response.data
+                    if (loginResponse != null) {
                         _statusControlPassword.value = Resource.Success(true)
                         val customSharedPreferences = CustomSharedPreferences(context)
                         customSharedPreferences.setMainUserLoginRememberMeCashier(false, context)
                     } else {
                         _statusControlPassword.value = Resource.Error(false, context.getString(R.string.not_matched))
                     }
-                } else {
-                    _statusControlPassword.value = Resource.Error(false,context.getString(R.string.pass_db_null))
+                }
+                is Resource.Error -> {
+                    _statusControlPassword.value = Resource.Error(false, response.message ?: context.getString(R.string.not_matched))
+                }
+                is Resource.Loading -> {
+                    _statusControlPassword.value = Resource.Loading(null)
                 }
             }
-            override fun onError(message: String) {
-                _statusControlPassword.value = Resource.Error(false,message)
-            }
-        })
+        }
     }
 }

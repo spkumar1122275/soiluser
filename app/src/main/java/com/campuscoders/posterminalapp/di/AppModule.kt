@@ -67,8 +67,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideLoginRepository(mainUserDao: MainUserDao, terminalUsersDao: TerminalUsersDao): LoginRepository {
-        return LoginRepositoryImpl(mainUserDao, terminalUsersDao)
+    fun provideLoginRepository(mainUserDao: MainUserDao, terminalUsersDao: TerminalUsersDao, authApiService: com.campuscoders.posterminalapp.data.remote.api.AuthApiService): LoginRepository {
+        return LoginRepositoryImpl(mainUserDao, terminalUsersDao, authApiService)
     }
 
     @Singleton
