@@ -4,6 +4,7 @@ import com.campuscoders.posterminalapp.data.locale.MainUserDao
 import com.campuscoders.posterminalapp.data.locale.TerminalUsersDao
 import com.campuscoders.posterminalapp.data.remote.api.AuthApiService
 import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
+import com.campuscoders.posterminalapp.data.remote.dto.TerminalUsersResponse
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
@@ -64,4 +65,12 @@ class LoginRepositoryImpl @Inject constructor(
     ): Response<LoginResponse> {
         return authApiService.login(terminalId, taxId, memberId, password)
     }
+
+    override suspend fun fetchTerminalUsersFromApi(
+        accessToken: String,
+        terminalId: String
+    ): Response<TerminalUsersResponse> {
+        return authApiService.getTerminalUsers(accessToken, terminalId)
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.campuscoders.posterminalapp.domain.repository.locale
 
 import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
+import com.campuscoders.posterminalapp.data.remote.dto.TerminalUsersResponse
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import retrofit2.Response
@@ -35,4 +36,10 @@ interface LoginRepository {
         memberId: String,
         password: String
     ): Response<LoginResponse>
+
+    suspend fun fetchTerminalUsersFromApi(
+        accessToken: String,
+        terminalId: String
+    ): Response<TerminalUsersResponse>
+
 }

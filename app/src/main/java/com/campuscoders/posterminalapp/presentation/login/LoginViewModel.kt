@@ -1,164 +1,61 @@
 package com.campuscoders.posterminalapp.presentation.login
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.content.Context
+import androidx.lifecycle.*
 import com.campuscoders.posterminalapp.domain.model.MainUser
-import com.campuscoders.posterminalapp.domain.model.TerminalUsers
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchMainUserUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.LoginWithApiUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.SaveMainUserUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.SaveTerminalUserUseCase
-import com.campuscoders.posterminalapp.utils.Constants
-import com.campuscoders.posterminalapp.utils.Constants.ADMIN
-import com.campuscoders.posterminalapp.utils.Constants.IPTAL_IADE
-import com.campuscoders.posterminalapp.utils.Constants.KASIYER_EKLEME_DUZENLEME
-import com.campuscoders.posterminalapp.utils.Constants.KASIYER_GORUTULEME
-import com.campuscoders.posterminalapp.utils.Constants.KASIYER_SILME
-import com.campuscoders.posterminalapp.utils.Constants.POS_YONETIMI
-import com.campuscoders.posterminalapp.utils.Constants.RAPOR_KAYDET_GONDER
-import com.campuscoders.posterminalapp.utils.Constants.TAHSILAT
-import com.campuscoders.posterminalapp.utils.Constants.TUM_RAPORLARI_GORUNTULEME
-import com.campuscoders.posterminalapp.utils.Constants.URUN_EKLEME_DUZENLEME
-import com.campuscoders.posterminalapp.utils.Constants.URUN_GORUNTULEME
-import com.campuscoders.posterminalapp.utils.Constants.URUN_SILME
-import com.campuscoders.posterminalapp.utils.Resource
-import com.campuscoders.posterminalapp.utils.TimeAndDate
+import com.campuscoders.posterminalapp.domain.use_case.login.HandleLoginUseCase
+import com.campuscoders.posterminalapp.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val saveMainUserUseCase: SaveMainUserUseCase,
-    private val fetchMainUserUseCase: FetchMainUserUseCase,
-    private val saveTerminalUserUseCase: SaveTerminalUserUseCase,
-    private val fetchTerminalUserUseCase: FetchTerminalUserUseCase,
-    private val loginWithApiUseCase: LoginWithApiUseCase
-): ViewModel() {
+    private val handleLoginUseCase: HandleLoginUseCase,
+    private val prefs: CustomSharedPreferences,
+    @ApplicationContext private val appContext: Context
+) : ViewModel() {
 
-    interface MainUserCallBack {
-        fun onMainUserFetched(mainUserFromDb: MainUser?)
-        fun onError(message: String)
+    private val _loginStatus = MutableLiveData<Resource<LoginResult>>()
+    val loginStatus: LiveData<Resource<LoginResult>> get() = _loginStatus
+
+    private val _rememberMeChecked = MutableLiveData<Boolean>()
+    val rememberMeChecked: LiveData<Boolean> get() = _rememberMeChecked
+
+    private val _savedLoginFields = MutableLiveData<Map<String, String>>()
+    val savedLoginFields: LiveData<Map<String, String>> get() = _savedLoginFields
+
+    init {
+        loadRememberMeState()
     }
 
-    private var _statusInsertMainUser = MutableLiveData<Resource<Boolean>>()
-    val statusInsertMainUser: LiveData<Resource<Boolean>>
-        get() = _statusInsertMainUser
+    private fun loadRememberMeState() {
+        val isRemembered = prefs.getControl()
+        _rememberMeChecked.value = isRemembered
 
-    private var _statusInsertTerminalUser = MutableLiveData<Resource<Boolean>>()
-    val statusInsertTerminalUser: LiveData<Resource<Boolean>>
-        get() = _statusInsertTerminalUser
-
-    private var _statusControlMainUser = MutableLiveData<Resource<Boolean>>()
-    val statusControlMainUser: LiveData<Resource<Boolean>>
-        get() = _statusControlMainUser
-
-    fun saveMainUser(mainUser: MainUser) {
-        _statusInsertMainUser.value = Resource.Loading(null)
-        viewModelScope.launch {
-            val response = saveMainUserUseCase.executeSaveMainUser(mainUser)
-            when(response) {
-                is Resource.Success -> {
-                    // save terminal
-                    saveTerminalUser(
-                        TerminalUsers(
-                            mainUser.mainUserTerminalId,
-                            mainUser.mainUserVknTckn,
-                            mainUser.mainUserUyeIsyeriNo,
-                            "${mainUser.mainUserFirstName} ${mainUser.mainUserLastName}",
-                            mainUser.mainUserPassword,
-                            TimeAndDate.getLocalDate(Constants.DATE_FORMAT),
-                            TimeAndDate.getTime(),
-                            IPTAL_IADE,
-                            TAHSILAT,
-                            KASIYER_GORUTULEME,
-                            KASIYER_EKLEME_DUZENLEME,
-                            KASIYER_SILME,
-                            URUN_GORUNTULEME,
-                            URUN_EKLEME_DUZENLEME,
-                            URUN_SILME,
-                            TUM_RAPORLARI_GORUNTULEME,
-                            RAPOR_KAYDET_GONDER,
-                            POS_YONETIMI,
-                            ADMIN)
-                    )
-                }
-                is Resource.Loading -> {_statusInsertMainUser.value = Resource.Loading(null)}
-                is Resource.Error -> {_statusInsertMainUser.value = Resource.Error(false,response.message?:"Error Insert MainUser")}
-            }
-            _statusInsertMainUser.value = response
+        if (isRemembered) {
+            val saved = prefs.getMainUserLogin(appContext).mapNotNullValues()
+            _savedLoginFields.value = saved
         }
     }
 
-    private fun saveTerminalUser(terminalUsers: TerminalUsers) {
-        _statusInsertTerminalUser.value = Resource.Loading(null)
+    fun handleLogin(mainUser: MainUser) {
+        _loginStatus.value = Resource.Loading(null)
         viewModelScope.launch {
-            val response = saveTerminalUserUseCase.executeSaveTerminalUser(terminalUsers)
-            _statusInsertTerminalUser.value = response
+            val result: Resource<LoginResult> = handleLoginUseCase(mainUser)
+            _loginStatus.postValue(result)
         }
     }
 
-    private fun fetchMainUser(terminalId: String, callBack: MainUserCallBack) {
-        viewModelScope.launch {
-            val response = fetchMainUserUseCase.executeFetchMainUser(terminalId)
-            when(response) {
-                is Resource.Success -> {
-                    callBack.onMainUserFetched(response.data)
-                }
-                is Resource.Loading -> {
-                    _statusControlMainUser.value = Resource.Loading(null)
-                }
-                is Resource.Error -> {
-                    _statusControlMainUser.value = Resource.Error(null,response.message?:"Error! (fetchMainUserUseCase)")
-                    callBack.onError(response.message?:"Error! (fetchMainUserUseCase)")
-                }
-            }
-        }
-    }
-
-    fun controlMainUser(mainUser: MainUser) {
-        _statusControlMainUser.value = Resource.Loading(null)
-        viewModelScope.launch {
-            // Use API for authentication
-            val response = loginWithApiUseCase.executeLoginWithApi(
-                terminalId = mainUser.mainUserTerminalId ?: "",
-                taxId = mainUser.mainUserVknTckn ?: "",
-                memberId = mainUser.mainUserUyeIsyeriNo ?: "",
-                password = mainUser.mainUserPassword ?: ""
-            )
-            
-            when (response) {
-                is Resource.Success -> {
-                    val loginResponse = response.data
-                    val userData = loginResponse?.user
-                    if (userData != null) {
-                        // Save user to local database for caching
-                        val userToSave = MainUser(
-                            mainUserTerminalId = userData.terminalId,
-                            mainUserVknTckn = userData.taxId,
-                            mainUserUyeIsyeriNo = userData.memberStore,
-                            mainUserPassword = mainUser.mainUserPassword,
-                            mainUserCellphoneNumber = userData.cellphoneNumber,
-                            mainUserFirstName = userData.firstName,
-                            mainUserLastName = userData.lastName
-                        )
-                        saveMainUserUseCase.executeSaveMainUser(userToSave)
-                        
-                        _statusControlMainUser.value = Resource.Success(true)
-                    } else {
-                        _statusControlMainUser.value = Resource.Error(false, "Invalid response from server")
-                    }
-                }
-                is Resource.Error -> {
-                    _statusControlMainUser.value = Resource.Error(false, response.message ?: "Authentication failed")
-                }
-                is Resource.Loading -> {
-                    _statusControlMainUser.value = Resource.Loading(null)
-                }
-            }
-        }
+    fun updateRememberMeState(isChecked: Boolean) {
+        prefs.setControl(isChecked)
+        _rememberMeChecked.value = isChecked
     }
 }
+
+// ✅ helper extension to clean nulls
+private fun HashMap<String, Any>.mapNotNullValues(): Map<String, String> =
+    mapNotNull { (k, v) ->
+        (v as? String)?.takeIf { it != "null" }?.let { k to it }
+    }.toMap()

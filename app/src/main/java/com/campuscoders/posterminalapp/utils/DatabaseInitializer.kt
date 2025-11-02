@@ -28,6 +28,11 @@ class DatabaseInitializer @Inject constructor(
     suspend fun initializeCategories(context: Context,packageName: String) {
         val uriList = getCategoryImageUris(context,packageName)
         val arrayList = arrayOf<Categories>(
+            Categories("0011","Fertiliser","-",uriList[11]),
+            Categories("0012","Insecticide","-",uriList[12]),
+            Categories("0013","Herbicide","-",uriList[13]),
+            Categories("0014","Seed","-",uriList[14]),
+            Categories("0015","biostimulant","-",uriList[15]),
             Categories("0000","Yiyecek","-",uriList[0]),
             Categories("0001","İçecek","-",uriList[1]),
             Categories("0002","Meyve","-",uriList[2]),
@@ -39,6 +44,8 @@ class DatabaseInitializer @Inject constructor(
             Categories("0008","Atıştırmalık","-",uriList[8]),
             Categories("0009","İlaç","-",uriList[9]),
             Categories("0010","Ev Eşya","-",uriList[10])
+
+
         )
 
         saveAllCategoriesUseCase.executeSaveAllCategories(*arrayList)
@@ -181,7 +188,12 @@ class DatabaseInitializer @Inject constructor(
             R.drawable.vegetables to "vegetables",
             R.drawable.snacks to "snacks",
             R.drawable.medicine to "medicine",
-            R.drawable.furniture to "furniture"
+            R.drawable.furniture to "furniture",
+            R.drawable.fertilizer to "fertilizer",
+            R.drawable.insecticide to "insecticide",
+            R.drawable.herbicide to "herbicide",
+            R.drawable.seed to "seed",
+            R.drawable.biostimulant to "biostimulant"
         )
 
         for ((drawableResId, fileName) in drawableMappings) {

@@ -7,26 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.campuscoders.posterminalapp.R
 import com.campuscoders.posterminalapp.databinding.FragmentLoginBinding
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.presentation.login.LoginViewModel
-import com.campuscoders.posterminalapp.utils.Constants.CELL_PHONE_NUMBER
-import com.campuscoders.posterminalapp.utils.Constants.FIRST_NAME
-import com.campuscoders.posterminalapp.utils.Constants.LAST_NAME
-import com.campuscoders.posterminalapp.utils.Constants.MEMBER_STORE
-import com.campuscoders.posterminalapp.utils.Constants.PASSWORD
-import com.campuscoders.posterminalapp.utils.Constants.TERMINAL_ID
-import com.campuscoders.posterminalapp.utils.Constants.VKN_TCKN
-import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
-import com.campuscoders.posterminalapp.utils.Resource
-import com.campuscoders.posterminalapp.utils.hide
-import com.campuscoders.posterminalapp.utils.show
-import com.campuscoders.posterminalapp.utils.toast
 import com.campuscoders.posterminalapp.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -34,166 +23,129 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels()
+    private lateinit var prefs: CustomSharedPreferences
 
-    private var ftransaction: FragmentTransaction? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        prefs = CustomSharedPreferences(requireContext())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity())[LoginViewModel::class.java]
-        ftransaction = requireActivity().supportFragmentManager.beginTransaction()
-
-        val customSharedPreferences = CustomSharedPreferences(requireContext())
-        saveMainUserIfNotExist(customSharedPreferences)
-
-        binding.buttonLogin.setOnClickListener {
-            areTestCredentialsValid()
-        }
-
-        binding.radioButtonGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radio_button_dev -> {
-                    clearAllFields()
-                }
-                R.id.radio_button_test -> {
-                    binding.textInputEditTerminalId.setText(TERMINAL_ID)
-                    binding.textInputEditTextTCKN.setText(VKN_TCKN)
-                    binding.textInputEditTextMemberStore.setText(MEMBER_STORE)
-                    binding.textInputEditTextPassword.setText(PASSWORD)
-                    disableTextFields()
-                }
-                R.id.radio_button_custom -> {
-                    clearAllFields()
-                }
-            }
-        }
-
-        observer()
+        setupObservers()
+        setupListeners()
     }
 
-    private fun observer() {
-        viewModel.statusInsertMainUser.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    binding.progressBarLogin.hide()
-                }
-                is Resource.Loading -> {
-                    binding.progressBarLogin.show()
-                }
-                is Resource.Error -> {
-                    binding.progressBarLogin.hide()
-                    toast(requireContext(), it.message ?: "Error!", true)
-                }
+    private fun setupListeners() {
+        // ✅ Remember Me switch
+        binding.switchRememberMe.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.updateRememberMeState(isChecked)
+        }
+
+        // ✅ Login button
+        binding.loginButton.setOnClickListener {
+            val terminalId = binding.etTerminalId.text.toString().trim()
+            val vknTckn = binding.etVknTckn.text.toString().trim()
+            val memberStore = binding.etMemberStore.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+
+            if (terminalId.isEmpty() || vknTckn.isEmpty() || memberStore.isEmpty() || password.isEmpty()) {
+                toast(requireContext(), "Lütfen tüm alanları doldurun", true)
+                return@setOnClickListener
+            }
+
+            val mainUser = MainUser(
+                mainUserTerminalId = terminalId,
+                mainUserVknTckn = vknTckn,
+                mainUserUyeIsyeriNo = memberStore,
+                mainUserPassword = password
+            )
+
+            lifecycleScope.launch {
+                viewModel.handleLogin(mainUser)
             }
         }
-        viewModel.statusControlMainUser.observe(viewLifecycleOwner) { resource ->
-            when (resource) {
+    }
+
+    private fun setupObservers() {
+        // ✅ Observe Remember Me switch
+        viewModel.rememberMeChecked.observe(viewLifecycleOwner) { isChecked ->
+            binding.switchRememberMe.isChecked = isChecked
+        }
+
+        // ✅ Auto-fill saved credentials if Remember Me active
+        viewModel.savedLoginFields.observe(viewLifecycleOwner) { saved ->
+            if (binding.switchRememberMe.isChecked && saved.isNotEmpty()) {
+                binding.etTerminalId.setText(saved[getString(R.string.user_terminal_id)] ?: "")
+                binding.etVknTckn.setText(saved[getString(R.string.user_vkn_tckn)] ?: "")
+                binding.etMemberStore.setText(saved[getString(R.string.user_uye_isyeri_no)] ?: "")
+                binding.etPassword.setText(saved[getString(R.string.user_password)] ?: "")
+            }
+        }
+
+        // ✅ Observe login status
+        viewModel.loginStatus.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.loginButton.isEnabled = false
+                }
+
                 is Resource.Success -> {
-                    binding.progressBarLogin.hide()
-                    context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        ftransaction?.let { f ->
-                            f.setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
-                            f.replace(R.id.fragmentContainerView, VerificationFragment())
-                            f.commit()
+                    binding.progressBar.visibility = View.GONE
+                    binding.loginButton.isEnabled = true
+
+                    val loginResult = result.data
+                    if (loginResult != null) {
+                        val role = loginResult.role
+                        val isOffline = loginResult.isOffline
+                        val mode = if (isOffline) "OFFLINE" else "ONLINE"
+
+                        toast(requireContext(), "Login successful ($mode mode)", false)
+
+                        when (role.lowercase()) {
+                            "main_user" -> navigateToMainDashboard()
+                            "terminal_user" -> navigateToTerminalDashboard()
+                            else -> toast(requireContext(), "Unknown role: $role", true)
                         }
-                    }, Constants.PROGRESS_BAR_DURATION.toLong())
+                    }
                 }
-                is Resource.Loading -> {
-                    binding.progressBarLogin.show()
-                }
+
                 is Resource.Error -> {
-                    binding.progressBarLogin.hide()
-                    context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                    toast(requireContext(), resource.message ?: "*Error*", false)
-                    }, Constants.PROGRESS_BAR_DURATION.toLong())
-                }
-            }
-        }
-        viewModel.statusInsertTerminalUser.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    binding.progressBarLogin.hide()
-                }
-                is Resource.Loading -> {
-                    binding.progressBarLogin.show()
-                }
-                is Resource.Error -> {
-                    binding.progressBarLogin.hide()
-                    toast(requireContext(), it.message ?: "Error!", false)
+                    binding.progressBar.visibility = View.GONE
+                    binding.loginButton.isEnabled = true
+                    toast(requireContext(), result.message ?: "Login failed", true)
                 }
             }
         }
     }
 
-    private fun saveMainUserIfNotExist(sharedPreferences: CustomSharedPreferences) {
-        if (sharedPreferences.getControl()!!) {
-            viewModel.saveMainUser(
-                MainUser(
-                    mainUserTerminalId = TERMINAL_ID,
-                    mainUserVknTckn = VKN_TCKN,
-                    mainUserUyeIsyeriNo = MEMBER_STORE,
-                    mainUserPassword = PASSWORD,
-                    mainUserCellphoneNumber = CELL_PHONE_NUMBER,
-                    mainUserFirstName = FIRST_NAME,
-                    mainUserLastName = LAST_NAME,
-                )
-            )
-            sharedPreferences.setControl(false)
-            sharedPreferences.setMainUserLogin(TERMINAL_ID, VKN_TCKN, MEMBER_STORE, PASSWORD, requireContext())
-        }
+    private fun navigateToMainDashboard() {
+        val dialog = context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
+        Handler(Looper.getMainLooper()).postDelayed({
+            dialog?.dismiss()
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.fragmentContainerView, VerificationFragment())
+                .commitAllowingStateLoss()
+        }, Constants.PROGRESS_BAR_DURATION.toLong())
     }
 
-    // Control TextFields
-    private fun areTestCredentialsValid() {
-        val terminalId = binding.textInputEditTerminalId.text.toString()
-        val tckn = binding.textInputEditTextTCKN.text.toString()
-        val memberStore = binding.textInputEditTextMemberStore.text.toString()
-        val password = binding.textInputEditTextPassword.text.toString()
-
-        if (terminalId == "" || tckn == "" || memberStore == "" || password == "") {
-            toast(requireContext(), requireActivity().getString(R.string.empty_fields), true)
-        } else {
-            viewModel.controlMainUser(
-                MainUser(
-                    mainUserTerminalId = terminalId,
-                    mainUserVknTckn = tckn,
-                    mainUserUyeIsyeriNo = memberStore,
-                    mainUserPassword = password
-                )
-            )
-        }
-    }
-
-    // TextFields false
-    private fun disableTextFields() {
-        binding.textInputEditTerminalId.isEnabled = false
-        binding.textInputEditTextTCKN.isEnabled = false
-        binding.textInputEditTextMemberStore.isEnabled = false
-        binding.textInputEditTextPassword.isEnabled = false
-    }
-
-    // TextFields true
-    private fun enableTextFields() {
-        binding.textInputEditTerminalId.isEnabled = true
-        binding.textInputEditTextTCKN.isEnabled = true
-        binding.textInputEditTextMemberStore.isEnabled = true
-        binding.textInputEditTextPassword.isEnabled = true
-    }
-
-    private fun clearAllFields() {
-        binding.textInputEditTerminalId.text?.clear()
-        binding.textInputEditTextTCKN.text?.clear()
-        binding.textInputEditTextMemberStore.text?.clear()
-        binding.textInputEditTextPassword.text?.clear()
-        enableTextFields()
+    private fun navigateToTerminalDashboard() {
+        val dialog = context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
+        Handler(Looper.getMainLooper()).postDelayed({
+            dialog?.dismiss()
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.fragmentContainerView, VerificationFragment())
+                .commitAllowingStateLoss()
+        }, Constants.PROGRESS_BAR_DURATION.toLong())
     }
 
     override fun onDestroyView() {
@@ -201,3 +153,4 @@ class LoginFragment : Fragment() {
         _binding = null
     }
 }
+

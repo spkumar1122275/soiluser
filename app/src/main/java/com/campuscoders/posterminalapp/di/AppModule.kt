@@ -20,6 +20,7 @@ import com.campuscoders.posterminalapp.domain.repository.locale.DocumentReposito
 import com.campuscoders.posterminalapp.domain.repository.locale.EditRepository
 import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
 import com.campuscoders.posterminalapp.domain.repository.locale.SaleRepository
+import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,5 +94,13 @@ object AppModule {
     @Provides
     fun provideDocumentRepository(ordersDao: OrdersDao, ordersProductsDao: OrdersProductsDao): DocumentRepository {
         return DocumentRepositoryImpl(ordersDao, ordersProductsDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCustomSharedPreferences(
+        @ApplicationContext context: Context
+    ): CustomSharedPreferences {
+        return CustomSharedPreferences(context)
     }
 }

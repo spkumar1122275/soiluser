@@ -46,7 +46,7 @@ interface PosApiService {
     suspend fun getTerminalUserById(
         @Path("terminal_id") terminalId: String,
         @Query("access_token") accessToken: String
-    ): Response<TerminalUserData>
+    ): Response<TerminalUsersResponse>
     
     // ==================== Categories ====================
     
