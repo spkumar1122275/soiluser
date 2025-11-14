@@ -3,6 +3,7 @@ package com.campuscoders.posterminalapp.domain.use_case.login
 
 import android.content.Context
 import com.campuscoders.posterminalapp.data.remote.dto.UserData
+import com.campuscoders.posterminalapp.di.SecurityUtils
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import com.campuscoders.posterminalapp.utils.*
@@ -46,7 +47,7 @@ class HandleLoginUseCase @Inject constructor(
                 terminalId = mainUser.mainUserTerminalId.orEmpty(),
                 taxId = mainUser.mainUserVknTckn.orEmpty(),
                 memberId = mainUser.mainUserUyeIsyeriNo.orEmpty(),
-                password = mainUser.mainUserPassword.orEmpty()
+                password = SecurityUtils.hashPasswordSHA256(mainUser.mainUserPassword.orEmpty())
             )) {
                 is Resource.Success -> {
                     val userData = response.data?.user
