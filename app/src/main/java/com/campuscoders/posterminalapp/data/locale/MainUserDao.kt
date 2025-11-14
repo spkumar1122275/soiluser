@@ -16,9 +16,9 @@ interface MainUserDao {
     @Query("SELECT main_user_password FROM MainUser WHERE main_user_store_id = :memberStoreId")
     suspend fun queryMainUserWithMemberStoreId(memberStoreId: String): String?
 
-    @Query("SELECT main_user_cellphone_number FROM MainUser WHERE main_user_tax_id = :taxId")
+    @Query("SELECT main_user_cellphone_number FROM MainUser WHERE main_user_pan = :taxId")
     suspend fun queryMainUserWithtaxId(taxId: String): String?
 
-    @Query("UPDATE MainUser SET main_user_password = :newPassword WHERE main_user_tax_id = :taxId")
+    @Query("UPDATE MainUser SET main_user_password = :newPassword WHERE main_user_pan = :taxId")
     suspend fun updateMainUserPassword(taxId: String, newPassword: String): Int
 }
