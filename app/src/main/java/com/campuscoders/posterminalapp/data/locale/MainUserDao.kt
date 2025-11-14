@@ -13,12 +13,12 @@ interface MainUserDao {
     @Query("SELECT * FROM MainUser WHERE main_user_terminal_id = :terminalId")
     suspend fun queryMainUser(terminalId: String): MainUser?
 
-    @Query("SELECT main_user_password FROM MainUser WHERE main_user_uye_isyeri_no = :memberStoreId")
+    @Query("SELECT main_user_password FROM MainUser WHERE main_user_store_id = :memberStoreId")
     suspend fun queryMainUserWithMemberStoreId(memberStoreId: String): String?
 
-    @Query("SELECT main_user_cellphone_number FROM MainUser WHERE main_user_vkn_tckn = :vknTckn")
-    suspend fun queryMainUserWithVknTckn(vknTckn: String): String?
+    @Query("SELECT main_user_cellphone_number FROM MainUser WHERE main_user_tax_id = :taxId")
+    suspend fun queryMainUserWithtaxId(taxId: String): String?
 
-    @Query("UPDATE MainUser SET main_user_password = :newPassword WHERE main_user_vkn_tckn = :vknTckn")
-    suspend fun updateMainUserPassword(vknTckn: String, newPassword: String): Int
+    @Query("UPDATE MainUser SET main_user_password = :newPassword WHERE main_user_tax_id = :taxId")
+    suspend fun updateMainUserPassword(taxId: String, newPassword: String): Int
 }

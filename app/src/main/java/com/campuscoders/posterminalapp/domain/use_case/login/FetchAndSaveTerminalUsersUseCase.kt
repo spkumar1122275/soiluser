@@ -17,7 +17,7 @@ class FetchAndSaveTerminalUsersUseCase @Inject constructor(
                 val terminalUsersList = response.body()!!.terminal_users.map { dto ->
                     TerminalUsers(
                         terminalUserTerminalId = dto.terminal_user_terminal_id,
-                        terminalUserVknTckn = dto.terminal_user_vkn_tckn,
+                        terminalUsertaxId = dto.terminal_user_vkn_tckn,
                         terminalUserUyeIsyeriNo = null,
                         terminalUserFullName = dto.terminal_user_full_name,
                         terminalUserPassword = dto.terminal_user_password,

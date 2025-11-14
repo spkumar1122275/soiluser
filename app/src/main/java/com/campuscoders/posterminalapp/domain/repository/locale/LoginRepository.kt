@@ -23,11 +23,11 @@ interface LoginRepository {
 
     suspend fun fetchTerminalUserPassword(terminalId: String): String?
 
-    suspend fun fetchMainUserCellPhoneNumber(vknTckn: String): String?
+    suspend fun fetchMainUserCellPhoneNumber(taxId: String): String?
 
-    suspend fun updateMainUserPassword(vknTckn: String, newPassword: String): Int
+    suspend fun updateMainUserPassword(taxId: String, newPassword: String): Int
 
-    suspend fun updateTerminalUserPassword(vknTckn: String, newPassword: String): Int
+    suspend fun updateTerminalUserPassword(taxId: String, newPassword: String): Int
 
     // API Methods
     suspend fun loginWithApi(

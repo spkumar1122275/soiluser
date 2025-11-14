@@ -20,8 +20,8 @@ interface TerminalUsersDao {
     @Query("SELECT terminal_user_password FROM TerminalUsers WHERE terminal_user_terminal_id = :terminalId")
     suspend fun queryTerminalUserForPassword(terminalId: String): String?
 
-    @Query("UPDATE TerminalUsers SET terminal_user_password = :newPassword WHERE terminal_user_vkn_tckn = :vknTckn")
-    suspend fun updateTerminalUserPassword(vknTckn: String, newPassword: String): Int
+    @Query("UPDATE TerminalUsers SET terminal_user_password = :newPassword WHERE terminal_user_vkn_tckn = :taxId")
+    suspend fun updateTerminalUserPassword(taxId: String, newPassword: String): Int
 
     @Query("DELETE FROM TerminalUsers WHERE terminalUserId = :terminalId")
     suspend fun deleteTerminalUser(terminalId: Int): Int

@@ -5,9 +5,9 @@ import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
 class UpdateTerminalUserPasswordUseCase @Inject constructor(private val repository: LoginRepository) {
-    suspend fun executeUpdateTerminalUserPassword(vknTckn: String, newPassword: String): Resource<Int> {
+    suspend fun executeUpdateTerminalUserPassword(taxId: String, newPassword: String): Resource<Int> {
         return try {
-            val response = repository.updateTerminalUserPassword(vknTckn, newPassword)
+            val response = repository.updateTerminalUserPassword(taxId, newPassword)
             if (response > 0) {
                 Resource.Success(response)
             } else {

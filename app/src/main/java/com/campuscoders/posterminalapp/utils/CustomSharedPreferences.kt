@@ -78,14 +78,14 @@ class CustomSharedPreferences(context: Context) {
     // region === Remember Me + Main User Login ===
     fun setMainUserLogin(
         terminalId: String,
-        vknTckn: String,
+        taxId: String,
         memberStoreId: String,
         password: String,
         context: Context
     ) {
         sharedMainUserLogin.edit {
             putString(context.getString(R.string.user_terminal_id), terminalId)
-            putString(context.getString(R.string.user_vkn_tckn), vknTckn)
+            putString(context.getString(R.string.user_vkn_tckn), taxId)
             putString(context.getString(R.string.user_uye_isyeri_no), memberStoreId)
             putString(context.getString(R.string.user_password), password)
         }
@@ -126,7 +126,7 @@ class CustomSharedPreferences(context: Context) {
     // region === Terminal User Login ===
     fun setTerminalUserLogin(
         terminalId: String,
-        vknTckn: String,
+        taxId: String,
         memberStoreId: String,
         password: String,
         fullName: String,
@@ -148,7 +148,7 @@ class CustomSharedPreferences(context: Context) {
     ) {
         sharedTerminalUserLogin.edit {
             putString(context.getString(R.string.user_terminal_id), terminalId)
-            putString(context.getString(R.string.user_vkn_tckn), vknTckn)
+            putString(context.getString(R.string.user_vkn_tckn), taxId)
             putString(context.getString(R.string.user_uye_isyeri_no), memberStoreId)
             putString(context.getString(R.string.user_password), password)
             putString(context.getString(R.string.user_full_name), fullName)

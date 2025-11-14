@@ -39,7 +39,7 @@ interface SaleRepository {
 
     suspend fun saveCustomerToDatabase(customer: Customers): Long
 
-    suspend fun fetchCustomerByVknTckn(customerVknTckn: String): Customers?
+    suspend fun fetchCustomerBytaxId(customertaxId: String): Customers?
 
     suspend fun fetchAllCustomers(): List<Customers>?
 

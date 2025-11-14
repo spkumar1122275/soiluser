@@ -19,10 +19,10 @@ class ForgetPasswordViewModel @Inject constructor(
     val statusIsMatched: LiveData<Resource<Boolean>>
         get() = _statusIsMatched
 
-    fun controlMainUserCellPhone(vknTckn: String, cellPhoneNumber: String) {
+    fun controlMainUserCellPhone(taxId: String, cellPhoneNumber: String) {
         _statusIsMatched.value = Resource.Loading(null)
         viewModelScope.launch {
-            val response = fetchMainUserCellPhoneNumberUseCase.executeFetchMainUserCellPhoneNumber(vknTckn)
+            val response = fetchMainUserCellPhoneNumberUseCase.executeFetchMainUserCellPhoneNumber(taxId)
             when(response) {
                 is Resource.Success -> {
                     val cellPhoneNumberFromDb = response.data

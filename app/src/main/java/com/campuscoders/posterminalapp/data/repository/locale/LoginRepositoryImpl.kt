@@ -45,16 +45,16 @@ class LoginRepositoryImpl @Inject constructor(
         return terminalUsersDao.queryTerminalUserForPassword(terminalId)
     }
 
-    override suspend fun fetchMainUserCellPhoneNumber(vknTckn: String): String? {
-        return mainUserDao.queryMainUserWithVknTckn(vknTckn)
+    override suspend fun fetchMainUserCellPhoneNumber(taxId: String): String? {
+        return mainUserDao.queryMainUserWithtaxId(taxId)
     }
 
-    override suspend fun updateMainUserPassword(vknTckn: String, newPassword: String): Int {
-        return mainUserDao.updateMainUserPassword(vknTckn, newPassword)
+    override suspend fun updateMainUserPassword(taxId: String, newPassword: String): Int {
+        return mainUserDao.updateMainUserPassword(taxId, newPassword)
     }
 
-    override suspend fun updateTerminalUserPassword(vknTckn: String, newPassword: String): Int {
-        return terminalUsersDao.updateTerminalUserPassword(vknTckn, newPassword)
+    override suspend fun updateTerminalUserPassword(taxId: String, newPassword: String): Int {
+        return terminalUsersDao.updateTerminalUserPassword(taxId, newPassword)
     }
 
     override suspend fun loginWithApi(

@@ -12,7 +12,7 @@ data class CustomerData(
     val customerId: Int? = null,
     
     @SerializedName("customer_vkn_tckn")
-    val customerVknTckn: String? = null,
+    val customertaxId: String? = null,
     
     @SerializedName("customer_company_name")
     val customerCompanyName: String? = null,

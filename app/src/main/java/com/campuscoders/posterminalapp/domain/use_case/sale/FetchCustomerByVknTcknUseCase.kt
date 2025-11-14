@@ -5,10 +5,10 @@ import com.campuscoders.posterminalapp.domain.repository.locale.SaleRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
-class FetchCustomerByVknTcknUseCase @Inject constructor(private val repository: SaleRepository) {
-    suspend fun executeFetchCustomerByVknTckn(customerVknTckn: String): Resource<Customers> {
+class FetchCustomerBytaxIdUseCase @Inject constructor(private val repository: SaleRepository) {
+    suspend fun executeFetchCustomerBytaxId(customertaxId: String): Resource<Customers> {
         return try {
-            val response = repository.fetchCustomerByVknTckn(customerVknTckn)
+            val response = repository.fetchCustomerBytaxId(customertaxId)
             response?.let {
                 return@let Resource.Success(it)
             } ?: Resource.Error(null,"No Customer data")

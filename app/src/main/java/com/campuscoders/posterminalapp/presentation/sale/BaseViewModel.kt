@@ -10,7 +10,7 @@ import com.campuscoders.posterminalapp.domain.model.OrdersProducts
 import com.campuscoders.posterminalapp.domain.model.Products
 import com.campuscoders.posterminalapp.domain.model.ShoppingCart
 import com.campuscoders.posterminalapp.domain.use_case.sale.FetchAllProductsByCategoryIdUseCase
-import com.campuscoders.posterminalapp.domain.use_case.sale.FetchCustomerByVknTcknUseCase
+import com.campuscoders.posterminalapp.domain.use_case.sale.FetchCustomerBytaxIdUseCase
 import com.campuscoders.posterminalapp.domain.use_case.sale.FetchProductByBarcodeUseCase
 import com.campuscoders.posterminalapp.domain.use_case.sale.FetchProductByProductIdUseCase
 import com.campuscoders.posterminalapp.domain.use_case.sale.SaveAllOrdersProductsUseCase
@@ -31,7 +31,7 @@ class BaseViewModel @Inject constructor(
     private val fetchAllProductsByCategoryIdUseCase: FetchAllProductsByCategoryIdUseCase,
     private val saveOrderUseCase: SaveOrderUseCase,
     private val saveAllOrdersProductsByUseCase: SaveAllOrdersProductsUseCase,
-    private val fetchCustomerByVknTcknUseCase: FetchCustomerByVknTcknUseCase,
+    private val fetchCustomerBytaxIdUseCase: FetchCustomerBytaxIdUseCase,
     private val fetchProductByBarcodeUseCase: FetchProductByBarcodeUseCase
 ) : ViewModel() {
 
@@ -190,14 +190,14 @@ class BaseViewModel @Inject constructor(
         }
     }
 
-    fun saveToDatabase(isCreditCard: Boolean, context: Context, vknTckn: String) {
+    fun saveToDatabase(isCreditCard: Boolean, context: Context, taxId: String) {
         _statusSaveToDatabase.value = Resource.Loading(null)
 
         var paymentType = "Nakit"
         if (isCreditCard) paymentType = "Kredi Kartı"
 
         viewModelScope.launch {
-            val customerData = fetchCustomerByVknTcknUseCase.executeFetchCustomerByVknTckn(vknTckn)
+            val customerData = fetchCustomerBytaxIdUseCase.executeFetchCustomerBytaxId(taxId)
             if (customerData is Resource.Success) {
                 ShoppingCartItems.setCustomerName("${customerData.data!!.customerFirstName} ${customerData.data.customerLastName}")
                 ShoppingCartItems.setPaymentType(paymentType)

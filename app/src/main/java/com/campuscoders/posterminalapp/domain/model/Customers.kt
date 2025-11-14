@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity (tableName = "Customers")
 data class Customers(
-    @ColumnInfo(name = "customer_vkn_tckn") var customerVknTckn: String? = "",
+    @ColumnInfo(name = "customer_vkn_tckn") var customertaxId: String? = "",
     @ColumnInfo(name = "customer_company_name") var customerCompanyName: String? = "",
     @ColumnInfo(name = "customer_first_name") var customerFirstName: String? = "",
     @ColumnInfo(name = "customer_last_name") var customerLastName: String? = "",

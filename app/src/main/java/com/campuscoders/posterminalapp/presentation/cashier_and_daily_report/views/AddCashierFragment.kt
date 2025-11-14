@@ -96,7 +96,7 @@ class AddCashierFragment : Fragment() {
         val mainUserInfos = customSharedPreferences.getMainUserLogin(requireContext())
         return terminalUserFromDb.apply {
             terminalUserTerminalId = binding.textInputEditTextCashierNo.text.toString()
-            terminalUserVknTckn = mainUserInfos[requireContext().getString(R.string.user_vkn_tckn)].toString()
+            terminalUsertaxId = mainUserInfos[requireContext().getString(R.string.user_vkn_tckn)].toString()
             terminalUserUyeIsyeriNo = mainUserInfos[requireContext().getString(R.string.user_uye_isyeri_no)].toString()
             terminalUserFullName = binding.textInputEditTextCashierNameSurname.text.toString()
             terminalUserPassword = binding.textInputEditTextPassword.text.toString()

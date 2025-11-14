@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity (tableName = "MainUser")
 data class MainUser(
     @ColumnInfo(name = "main_user_terminal_id") var mainUserTerminalId: String? = null,
-    @ColumnInfo(name = "main_user_vkn_tckn") var mainUserVknTckn: String? = null,
-    @ColumnInfo(name = "main_user_uye_isyeri_no") var mainUserUyeIsyeriNo: String? = null,
+    @ColumnInfo(name = "main_user_tax_id") var mainUserTaxId: String? = null,
+    @ColumnInfo(name = "main_user_store_id") var mainUserStoreId: String? = null,
     @ColumnInfo(name = "main_user_password") var mainUserPassword: String? = null,
     @ColumnInfo(name = "main_user_cellphone_number") var mainUserCellphoneNumber: String? = null,
     @ColumnInfo(name = "main_user_first_name") var mainUserFirstName: String? = null,

@@ -82,8 +82,8 @@ class SaleRepositoryImpl @Inject constructor(
         return customersDao.insertCustomer(customer)
     }
 
-    override suspend fun fetchCustomerByVknTckn(customerVknTckn: String): Customers? {
-        return customersDao.queryCustomerByVknTckn(customerVknTckn)
+    override suspend fun fetchCustomerBytaxId(customertaxId: String): Customers? {
+        return customersDao.queryCustomerBytaxId(customertaxId)
     }
 
     override suspend fun fetchAllCustomers(): List<Customers>? {

@@ -45,8 +45,8 @@ class HandleLoginUseCase @Inject constructor(
             // 🧩 STEP 2: Either token missing or expired → online login
             when (val response = loginWithApiUseCase.executeLoginWithApi(
                 terminalId = mainUser.mainUserTerminalId.orEmpty(),
-                taxId = mainUser.mainUserVknTckn.orEmpty(),
-                memberId = mainUser.mainUserUyeIsyeriNo.orEmpty(),
+                taxId = mainUser.mainUserTaxId.orEmpty(),
+                memberId = mainUser.mainUserStoreId.orEmpty(),
                 password = SecurityUtils.hashPasswordSHA256(mainUser.mainUserPassword.orEmpty())
             )) {
                 is Resource.Success -> {
@@ -95,8 +95,8 @@ class HandleLoginUseCase @Inject constructor(
 
         prefs.setMainUserLogin(
             mainUser.mainUserTerminalId.orEmpty(),
-            mainUser.mainUserVknTckn.orEmpty(),
-            mainUser.mainUserUyeIsyeriNo.orEmpty(),
+            mainUser.mainUserTaxId.orEmpty(),
+            mainUser.mainUserStoreId.orEmpty(),
             mainUser.mainUserPassword.orEmpty(),
             appContext
         )
@@ -115,7 +115,7 @@ class HandleLoginUseCase @Inject constructor(
             saveTerminalUserUseCase.executeSaveTerminalUser(
                 TerminalUsers(
                     terminalUserTerminalId = userData.terminalId,
-                    terminalUserVknTckn = userData.taxId,
+                    terminalUsertaxId = userData.taxId,
                     terminalUserUyeIsyeriNo = userData.memberStore,
                     terminalUserFullName = "${userData.firstName} ${userData.lastName}",
                     terminalUserPassword = mainUser.mainUserPassword,

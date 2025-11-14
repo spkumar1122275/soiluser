@@ -51,19 +51,19 @@ class LoginFragment : Fragment() {
         // ✅ Login button
         binding.loginButton.setOnClickListener {
             val terminalId = binding.etTerminalId.text.toString().trim()
-            val vknTckn = binding.etVknTckn.text.toString().trim()
+            val taxId = binding.ettaxId.text.toString().trim()
             val memberStore = binding.etMemberStore.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (terminalId.isEmpty() || vknTckn.isEmpty() || memberStore.isEmpty() || password.isEmpty()) {
+            if (terminalId.isEmpty() || taxId.isEmpty() || memberStore.isEmpty() || password.isEmpty()) {
                 toast(requireContext(), "Lütfen tüm alanları doldurun", true)
                 return@setOnClickListener
             }
 
             val mainUser = MainUser(
                 mainUserTerminalId = terminalId,
-                mainUserVknTckn = vknTckn,
-                mainUserUyeIsyeriNo = memberStore,
+                mainUserTaxId = taxId,
+                mainUserStoreId = memberStore,
                 mainUserPassword = password
             )
 
@@ -83,7 +83,7 @@ class LoginFragment : Fragment() {
         viewModel.savedLoginFields.observe(viewLifecycleOwner) { saved ->
             if (binding.switchRememberMe.isChecked && saved.isNotEmpty()) {
                 binding.etTerminalId.setText(saved[getString(R.string.user_terminal_id)] ?: "")
-                binding.etVknTckn.setText(saved[getString(R.string.user_vkn_tckn)] ?: "")
+                binding.ettaxId.setText(saved[getString(R.string.user_vkn_tckn)] ?: "")
                 binding.etMemberStore.setText(saved[getString(R.string.user_uye_isyeri_no)] ?: "")
                 binding.etPassword.setText(saved[getString(R.string.user_password)] ?: "")
             }
