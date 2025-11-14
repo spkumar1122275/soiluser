@@ -116,7 +116,7 @@ class HandleLoginUseCase @Inject constructor(
                 TerminalUsers(
                     terminalUserTerminalId = userData.terminalId,
                     terminalUsertaxId = userData.taxId,
-                    terminalUserUyeIsyeriNo = userData.memberStore,
+                    terminalUserStoreId = userData.memberStore,
                     terminalUserFullName = "${userData.firstName} ${userData.lastName}",
                     terminalUserPassword = mainUser.mainUserPassword,
                     terminalUserDate = TimeAndDate.getLocalDate(Constants.DATE_FORMAT),

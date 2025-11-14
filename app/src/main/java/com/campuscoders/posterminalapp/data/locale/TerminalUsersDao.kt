@@ -14,13 +14,13 @@ interface TerminalUsersDao {
     @Query("SELECT * FROM TerminalUsers WHERE terminal_user_terminal_id = :terminalId")
     suspend fun queryTerminalUser(terminalId: String): TerminalUsers?
 
-    @Query("SELECT * FROM TerminalUsers WHERE terminal_user_uye_isyeri_no = :memberStoreId")
+    @Query("SELECT * FROM TerminalUsers WHERE terminal_user_store_id = :memberStoreId")
     suspend fun queryTerminalUserByMemberStoreId(memberStoreId: String): TerminalUsers?
 
     @Query("SELECT terminal_user_password FROM TerminalUsers WHERE terminal_user_terminal_id = :terminalId")
     suspend fun queryTerminalUserForPassword(terminalId: String): String?
 
-    @Query("UPDATE TerminalUsers SET terminal_user_password = :newPassword WHERE terminal_user_vkn_tckn = :taxId")
+    @Query("UPDATE TerminalUsers SET terminal_user_password = :newPassword WHERE terminal_user_tax_id = :taxId")
     suspend fun updateTerminalUserPassword(taxId: String, newPassword: String): Int
 
     @Query("DELETE FROM TerminalUsers WHERE terminalUserId = :terminalId")

@@ -120,7 +120,7 @@ class LoginTwoViewModel @Inject constructor(
     private fun saveToSharedPreferences(terminalUser: TerminalUsers, isAdmin: Boolean, context: Context) {
         val customSharedPreferences = CustomSharedPreferences(context)
         customSharedPreferences.setTerminalUserLogin(terminalUser.terminalUserTerminalId!!,terminalUser.terminalUsertaxId!!,
-            terminalUser.terminalUserUyeIsyeriNo!!,terminalUser.terminalUserPassword!!,terminalUser.terminalUserFullName!!,terminalUser.terminalUserDate!!,
+            terminalUser.terminalUserStoreId!!,terminalUser.terminalUserPassword!!,terminalUser.terminalUserFullName!!,terminalUser.terminalUserDate!!,
             terminalUser.terminalUserTime!!,terminalUser.terminalUserIptalIade!!,terminalUser.terminalUserTahsilat!!,
             terminalUser.terminalUserKasiyerGoruntuleme!!,terminalUser.terminalUserKasiyerEklemeDuzenleme!!,terminalUser.terminalUserKasiyerSilme!!,
             terminalUser.terminalUserUrunGoruntuleme!!,terminalUser.terminalUserUrunEklemeDuzenleme!!,terminalUser.terminalUserUrunSilme!!,

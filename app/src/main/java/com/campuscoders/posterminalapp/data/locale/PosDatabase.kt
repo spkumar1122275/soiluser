@@ -9,11 +9,14 @@ import com.campuscoders.posterminalapp.domain.model.Orders
 import com.campuscoders.posterminalapp.domain.model.OrdersProducts
 import com.campuscoders.posterminalapp.domain.model.Products
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
+import com.campuscoders.posterminalapp.domain.model.Company
 
 @Database(
-    entities = [MainUser::class, TerminalUsers::class, Products::class, Orders::class, OrdersProducts::class, Customers::class, Categories::class],
+    entities = [ Company::class, MainUser::class, TerminalUsers::class, Products::class, Orders::class, OrdersProducts::class, Customers::class, Categories::class],
     version = 1)
 abstract class PosDatabase: RoomDatabase() {
+
+    abstract fun companyDao(): CompanyDao
     abstract fun mainUserDao(): MainUserDao
     abstract fun terminalUsersDao(): TerminalUsersDao
     abstract fun categoriesDao(): CategoriesDao

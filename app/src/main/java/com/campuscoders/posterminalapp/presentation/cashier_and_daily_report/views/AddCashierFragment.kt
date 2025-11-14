@@ -97,7 +97,7 @@ class AddCashierFragment : Fragment() {
         return terminalUserFromDb.apply {
             terminalUserTerminalId = binding.textInputEditTextCashierNo.text.toString()
             terminalUsertaxId = mainUserInfos[requireContext().getString(R.string.user_vkn_tckn)].toString()
-            terminalUserUyeIsyeriNo = mainUserInfos[requireContext().getString(R.string.user_uye_isyeri_no)].toString()
+            terminalUserStoreId = mainUserInfos[requireContext().getString(R.string.user_uye_isyeri_no)].toString()
             terminalUserFullName = binding.textInputEditTextCashierNameSurname.text.toString()
             terminalUserPassword = binding.textInputEditTextPassword.text.toString()
             terminalUserDate = TimeAndDate.getLocalDate(Constants.DATE_FORMAT)

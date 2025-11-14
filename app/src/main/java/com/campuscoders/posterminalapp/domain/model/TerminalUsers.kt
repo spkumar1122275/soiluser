@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity (tableName = "TerminalUsers")
 data class TerminalUsers(
     @ColumnInfo(name = "terminal_user_terminal_id") var terminalUserTerminalId: String? = null,  //FK
-    @ColumnInfo(name = "terminal_user_vkn_tckn") var terminalUsertaxId: String? = null,
-    @ColumnInfo(name = "terminal_user_uye_isyeri_no") var terminalUserUyeIsyeriNo: String? = null,
+    @ColumnInfo(name = "terminal_user_tax_id") var terminalUsertaxId: String? = null,
+    @ColumnInfo(name = "terminal_user_store_id") var terminalUserStoreId: String? = null,
     @ColumnInfo(name = "terminal_user_full_name") var terminalUserFullName: String? = null,
     @ColumnInfo(name = "terminal_user_password") var terminalUserPassword: String? = null,
     @ColumnInfo(name = "terminal_user_date") var terminalUserDate: String? = null,
