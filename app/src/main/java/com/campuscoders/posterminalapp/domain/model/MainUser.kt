@@ -2,9 +2,20 @@ package com.campuscoders.posterminalapp.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity (tableName = "MainUser")
+@Entity(
+    tableName = "MainUser",
+    foreignKeys = [
+        ForeignKey(
+            entity = Company::class,
+            parentColumns = ["store_id"],
+            childColumns = ["main_user_store_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class MainUser(
     @ColumnInfo(name = "main_user_terminal_id") var mainUserTerminalId: String? = null,
     @ColumnInfo(name = "main_user_tax_id") var mainUserTaxId: String? = null,
