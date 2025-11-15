@@ -66,7 +66,7 @@ class MainFragment : Fragment() {
         }
 
         binding.cardPayment.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_tahsilat)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_collection)] as Boolean) {
                 toast(requireContext(),"Coming soon...",false)
             } else {
                 toast(requireContext(),requireContext().getString(R.string.no_authorization),false)

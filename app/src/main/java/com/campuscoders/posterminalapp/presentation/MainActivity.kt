@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         binding.menulayout.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.itemDailyReport -> {
-                    if (terminalUser[getString(R.string.user_tum_raporları_goruntuleme)] as Boolean) {
+                    if (terminalUser[getString(R.string.user_view_all_report)] as Boolean) {
                         intent.putExtra("navigation", "1")
                         startActivity(intent)
                         overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.itemCashierOperations -> {
-                    if (terminalUser[this.getString(R.string.user_kasiyer_goruntuleme)] as Boolean) {
+                    if (terminalUser[this.getString(R.string.user_cashier_view)] as Boolean) {
                         intent.putExtra("navigation", "2")
                         startActivity(intent)
                         overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         val customSharedPreferences = CustomSharedPreferences(this)
         val mainUserInfos = customSharedPreferences.getMainUserLogin(this)
         val terminalNo = mainUserInfos[getString(R.string.user_terminal_id)]
-        val uyeIsyeriNo = mainUserInfos[getString(R.string.user_uye_isyeri_no)]
+        val uyeIsyeriNo = mainUserInfos[getString(R.string.user_store_no)]
         val versionName = this.packageManager.getPackageInfo(this.packageName, 0).versionName
         val androidVersion = Build.VERSION.RELEASE
         val serialNumber = Build.SERIAL

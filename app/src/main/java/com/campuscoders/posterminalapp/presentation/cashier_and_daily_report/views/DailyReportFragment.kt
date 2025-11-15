@@ -130,8 +130,8 @@ class DailyReportFragment : Fragment() {
         totalTax += totalTaxCent / 100
         totalTaxCent %= 100
 
-        binding.textViewTotalPrice.text = "₺$totalPrice,${totalPriceCent.toCent()}"
-        binding.textViewTotalTax.text = "₺$totalTax,${totalTaxCent.toCent()}"
+        binding.textViewTotalPrice.text = "₹$totalPrice,${totalPriceCent.toCent()}"
+        binding.textViewTotalTax.text = "₹$totalTax,${totalTaxCent.toCent()}"
     }
 
     override fun onDestroyView() {

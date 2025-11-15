@@ -6,7 +6,7 @@ data class TerminalUsersResponse(
 
 data class TerminalUserDto(
     val terminal_user_terminal_id: String?,
-    val terminal_user_tax_id: String?,
+    val terminal_user_pan: String?,
     val terminal_user_full_name: String?,
     val terminal_user_password: String?,
     val terminal_user_date: String?,

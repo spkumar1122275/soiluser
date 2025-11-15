@@ -70,8 +70,8 @@ class AddCashierFragment : Fragment() {
         val mainUserInfos = customSharedPreferences.getMainUserLogin(requireContext())
         return TerminalUsers(
             binding.textInputEditTextCashierNo.text.toString(),
-            mainUserInfos[requireContext().getString(R.string.user_vkn_tckn)].toString(),
-            mainUserInfos[requireContext().getString(R.string.user_uye_isyeri_no)].toString(),
+            mainUserInfos[requireContext().getString(R.string.user_pan_no)].toString(),
+            mainUserInfos[requireContext().getString(R.string.user_store_no)].toString(),
             binding.textInputEditTextCashierNameSurname.text.toString(),
             binding.textInputEditTextPassword.text.toString(),
             TimeAndDate.getLocalDate(Constants.DATE_FORMAT),
@@ -96,8 +96,8 @@ class AddCashierFragment : Fragment() {
         val mainUserInfos = customSharedPreferences.getMainUserLogin(requireContext())
         return terminalUserFromDb.apply {
             terminalUserTerminalId = binding.textInputEditTextCashierNo.text.toString()
-            terminalUsertaxId = mainUserInfos[requireContext().getString(R.string.user_vkn_tckn)].toString()
-            terminalUserStoreId = mainUserInfos[requireContext().getString(R.string.user_uye_isyeri_no)].toString()
+            terminalUsertaxId = mainUserInfos[requireContext().getString(R.string.user_pan_no)].toString()
+            terminalUserStoreId = mainUserInfos[requireContext().getString(R.string.user_store_no)].toString()
             terminalUserFullName = binding.textInputEditTextCashierNameSurname.text.toString()
             terminalUserPassword = binding.textInputEditTextPassword.text.toString()
             terminalUserDate = TimeAndDate.getLocalDate(Constants.DATE_FORMAT)

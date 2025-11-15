@@ -83,8 +83,8 @@ class LoginFragment : Fragment() {
         viewModel.savedLoginFields.observe(viewLifecycleOwner) { saved ->
             if (binding.switchRememberMe.isChecked && saved.isNotEmpty()) {
                 binding.etTerminalId.setText(saved[getString(R.string.user_terminal_id)] ?: "")
-                binding.ettaxId.setText(saved[getString(R.string.user_vkn_tckn)] ?: "")
-                binding.etMemberStore.setText(saved[getString(R.string.user_uye_isyeri_no)] ?: "")
+                binding.ettaxId.setText(saved[getString(R.string.user_pan_no)] ?: "")
+                binding.etMemberStore.setText(saved[getString(R.string.user_store_no)] ?: "")
                 binding.etPassword.setText(saved[getString(R.string.user_password)] ?: "")
             }
         }

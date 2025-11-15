@@ -68,7 +68,7 @@ class DocumentDetailsFragment: Fragment() {
             ftransaction.popBackStack()
         }
         binding.buttonCancelSale.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_iptal_iade)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_cancel_refund)] as Boolean) {
                 viewModel.cancelSale()
                 showCancelSalePopUp()
             } else {
@@ -84,7 +84,7 @@ class DocumentDetailsFragment: Fragment() {
             toast(requireContext(),"Coming soon",false)
         }
         binding.buttonSend.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_rapor_kaydet_gonder)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_save_send_report)] as Boolean) {
                 showCustomerInfoPopUp()
             } else {
                 toast(requireContext(),requireContext().getString(R.string.no_authorization),false)
@@ -111,8 +111,8 @@ class DocumentDetailsFragment: Fragment() {
         viewModel.statusProductAndTaxPrice.observe(viewLifecycleOwner) {
             when(it) {
                 is Resource.Success -> {
-                    binding.textViewTotalAmount.text = "₺${it.data!!["price"]}"
-                    binding.textViewTotalTax.text = "₺${it.data["tax"]}"
+                    binding.textViewTotalAmount.text = "₹${it.data!!["price"]}"
+                    binding.textViewTotalTax.text = "₹${it.data["tax"]}"
                     cost = it.data["price"].toString()
                 }
                 is Resource.Loading -> {}

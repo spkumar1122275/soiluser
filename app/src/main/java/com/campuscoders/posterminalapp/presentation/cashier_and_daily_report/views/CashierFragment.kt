@@ -60,7 +60,7 @@ class CashierFragment : Fragment() {
         }
 
         binding.buttonAddCashier.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_kasiyer_ekleme_duzenleme)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_cashier_add_edit)] as Boolean) {
                 ftransaction?.let {
                     it.replace(R.id.fragmentContainerViewCashierAndDailyReportActivity, AddCashierFragment())
                     it.addToBackStack(null)
@@ -111,7 +111,7 @@ class CashierFragment : Fragment() {
         val linearDelete = dialogView.findViewById<LinearLayout>(R.id.linearLayoutDelete)
 
         linearEdit.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_kasiyer_ekleme_duzenleme)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_cashier_add_edit)] as Boolean) {
                 val addCashierFragment = AddCashierFragment()
                 val bundle = Bundle()
                 bundle.putInt("terminal_id",terminalId)
@@ -129,7 +129,7 @@ class CashierFragment : Fragment() {
         }
 
         linearDelete.setOnClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_kasiyer_silme)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_cashier_delete)] as Boolean) {
                 viewModel.deleteCashier(terminalId)
             } else {
                 toast(requireContext(),requireContext().getString(R.string.no_authorization),false)

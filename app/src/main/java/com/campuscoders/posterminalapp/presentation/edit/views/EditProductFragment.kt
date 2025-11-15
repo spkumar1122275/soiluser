@@ -108,7 +108,7 @@ class EditProductFragment : Fragment() {
         binding.recyclerViewEditProduct.layoutManager = staggeredGridLayoutManager
 
         editProductAdapter.setOnItemClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_urun_goruntuleme)] as Boolean) {
+            if (terminalUser[requireContext().getString(R.string.user_product_view)] as Boolean) {
                 showProductDetailPopup(it)
             } else {
                 toast(requireContext(),requireContext().getString(R.string.no_authorization),false)
@@ -116,8 +116,8 @@ class EditProductFragment : Fragment() {
         }
 
         editProductAdapter.setOnLongItemClickListener {
-            if (terminalUser[requireContext().getString(R.string.user_urun_ekleme_duzenleme)] as Boolean) {
-                showEditOrDeletePopup(it, terminalUser[requireContext().getString(R.string.user_urun_silme)] as Boolean)
+            if (terminalUser[requireContext().getString(R.string.user_product_add_edit)] as Boolean) {
+                showEditOrDeletePopup(it, terminalUser[requireContext().getString(R.string.user_product_delete)] as Boolean)
                 productId = it
             } else {
                 toast(requireContext(),requireContext().getString(R.string.no_authorization),false)
@@ -181,7 +181,7 @@ class EditProductFragment : Fragment() {
 
         productImage.glide(product.productImage?:"", placeHolderProgressBar(requireContext()))
         productName.text = product.productName
-        productTotal.text = "₺${product.productPrice},${product.productPriceCents?.toInt()?.toCent()}"
+        productTotal.text = "₹${product.productPrice},${product.productPriceCents?.toInt()?.toCent()}"
         productTax.text = "%${product.productKdv}"
         productBarcode.text = product.productBarcode
 

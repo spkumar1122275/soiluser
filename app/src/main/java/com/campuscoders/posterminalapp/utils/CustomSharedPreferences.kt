@@ -85,8 +85,8 @@ class CustomSharedPreferences(context: Context) {
     ) {
         sharedMainUserLogin.edit {
             putString(context.getString(R.string.user_terminal_id), terminalId)
-            putString(context.getString(R.string.user_vkn_tckn), taxId)
-            putString(context.getString(R.string.user_uye_isyeri_no), memberStoreId)
+            putString(context.getString(R.string.user_pan_no), taxId)
+            putString(context.getString(R.string.user_store_no), memberStoreId)
             putString(context.getString(R.string.user_password), password)
         }
     }
@@ -108,10 +108,10 @@ class CustomSharedPreferences(context: Context) {
 
         hashMap[context.getString(R.string.user_terminal_id)] =
             sharedMainUserLogin.getString(context.getString(R.string.user_terminal_id), NULL) ?: NULL
-        hashMap[context.getString(R.string.user_vkn_tckn)] =
-            sharedMainUserLogin.getString(context.getString(R.string.user_vkn_tckn), NULL) ?: NULL
-        hashMap[context.getString(R.string.user_uye_isyeri_no)] =
-            sharedMainUserLogin.getString(context.getString(R.string.user_uye_isyeri_no), NULL) ?: NULL
+        hashMap[context.getString(R.string.user_pan_no)] =
+            sharedMainUserLogin.getString(context.getString(R.string.user_pan_no), NULL) ?: NULL
+        hashMap[context.getString(R.string.user_store_no)] =
+            sharedMainUserLogin.getString(context.getString(R.string.user_store_no), NULL) ?: NULL
         hashMap[context.getString(R.string.user_password)] =
             sharedMainUserLogin.getString(context.getString(R.string.user_password), NULL) ?: NULL
         hashMap[context.getString(R.string.user_remember_me_manager)] =
@@ -148,23 +148,23 @@ class CustomSharedPreferences(context: Context) {
     ) {
         sharedTerminalUserLogin.edit {
             putString(context.getString(R.string.user_terminal_id), terminalId)
-            putString(context.getString(R.string.user_vkn_tckn), taxId)
-            putString(context.getString(R.string.user_uye_isyeri_no), memberStoreId)
+            putString(context.getString(R.string.user_pan_no), taxId)
+            putString(context.getString(R.string.user_store_no), memberStoreId)
             putString(context.getString(R.string.user_password), password)
             putString(context.getString(R.string.user_full_name), fullName)
             putString(context.getString(R.string.user_date), date)
             putString(context.getString(R.string.user_time), time)
-            putBoolean(context.getString(R.string.user_iptal_iade), iptalIade)
-            putBoolean(context.getString(R.string.user_tahsilat), tahsilat)
-            putBoolean(context.getString(R.string.user_kasiyer_goruntuleme), kasiyerGoruntuleme)
-            putBoolean(context.getString(R.string.user_kasiyer_ekleme_duzenleme), kasiyerEklemeDuzenleme)
-            putBoolean(context.getString(R.string.user_kasiyer_silme), kasiyerSilme)
-            putBoolean(context.getString(R.string.user_urun_goruntuleme), urunGoruntuleme)
-            putBoolean(context.getString(R.string.user_urun_ekleme_duzenleme), urunEklemeDuzenleme)
-            putBoolean(context.getString(R.string.user_urun_silme), urunSilme)
-            putBoolean(context.getString(R.string.user_tum_raporları_goruntuleme), tumRaporlariGoruntuleme)
-            putBoolean(context.getString(R.string.user_rapor_kaydet_gonder), raporKaydetGonder)
-            putBoolean(context.getString(R.string.user_pos_yonetimi), posYonetimi)
+            putBoolean(context.getString(R.string.user_cancel_refund), iptalIade)
+            putBoolean(context.getString(R.string.user_collection), tahsilat)
+            putBoolean(context.getString(R.string.user_cashier_view), kasiyerGoruntuleme)
+            putBoolean(context.getString(R.string.user_cashier_add_edit), kasiyerEklemeDuzenleme)
+            putBoolean(context.getString(R.string.user_cashier_delete), kasiyerSilme)
+            putBoolean(context.getString(R.string.user_product_view), urunGoruntuleme)
+            putBoolean(context.getString(R.string.user_product_add_edit), urunEklemeDuzenleme)
+            putBoolean(context.getString(R.string.user_product_delete), urunSilme)
+            putBoolean(context.getString(R.string.user_view_all_report), tumRaporlariGoruntuleme)
+            putBoolean(context.getString(R.string.user_save_send_report), raporKaydetGonder)
+            putBoolean(context.getString(R.string.user_pos_management), posYonetimi)
             putBoolean(context.getString(R.string.user_admin), admin)
         }
     }
@@ -173,10 +173,10 @@ class CustomSharedPreferences(context: Context) {
         val hashMap = hashMapOf<String, Any>()
         hashMap[context.getString(R.string.user_terminal_id)] =
             sharedTerminalUserLogin.getString(context.getString(R.string.user_terminal_id), NULL) ?: NULL
-        hashMap[context.getString(R.string.user_vkn_tckn)] =
-            sharedTerminalUserLogin.getString(context.getString(R.string.user_vkn_tckn), NULL) ?: NULL
-        hashMap[context.getString(R.string.user_uye_isyeri_no)] =
-            sharedTerminalUserLogin.getString(context.getString(R.string.user_uye_isyeri_no), NULL) ?: NULL
+        hashMap[context.getString(R.string.user_pan_no)] =
+            sharedTerminalUserLogin.getString(context.getString(R.string.user_pan_no), NULL) ?: NULL
+        hashMap[context.getString(R.string.user_store_no)] =
+            sharedTerminalUserLogin.getString(context.getString(R.string.user_store_no), NULL) ?: NULL
         hashMap[context.getString(R.string.user_password)] =
             sharedTerminalUserLogin.getString(context.getString(R.string.user_password), NULL) ?: NULL
         return hashMap

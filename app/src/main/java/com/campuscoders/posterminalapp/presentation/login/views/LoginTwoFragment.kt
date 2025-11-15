@@ -139,7 +139,7 @@ class LoginTwoFragment : Fragment() {
         val cashier = customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_remember_me_terminal)] as Boolean
         if (manager && isAdmin) {
             binding.checkBoxRememberMe.isChecked = true
-            binding.textInputEditTextUyeNo.setText(customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_uye_isyeri_no)].toString())
+            binding.textInputEditTextUyeNo.setText(customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_store_no)].toString())
             binding.textInputEditTextPassword.setText(customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_password)].toString())
         } else if (cashier && !(isAdmin)) {
             binding.checkBoxRememberMe.isChecked = true

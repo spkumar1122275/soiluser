@@ -103,8 +103,8 @@ class BaseViewModel @Inject constructor(
             ShoppingCartItems.setTotalPrice("$totalPrice,${totalPriceCent.toCent()}")
             ShoppingCartItems.setTotalTax("$totalKdv,${totalKdvCent.toCent()}")
 
-            _statusTotal.value = "₺$totalPrice,${totalPriceCent.toCent()}"
-            _statusTotalTax.value = "₺$totalKdv,${totalKdvCent.toCent()}"
+            _statusTotal.value = "₹$totalPrice,${totalPriceCent.toCent()}"
+            _statusTotalTax.value = "₹$totalKdv,${totalKdvCent.toCent()}"
         }
         _statusShoppingCartQuantity.value = _statusShoppingCartList.value?.size
     }
