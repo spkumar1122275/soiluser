@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/tckn_vkn"
+            android:hint="@string/user_pan_no"
             app:startIconDrawable="@drawable/baseline_account_circle_24"
             app:startIconTint="?attr/colorOnSurfaceVariant">
 

@@ -121,10 +121,10 @@ class LoginTwoViewModel @Inject constructor(
         val customSharedPreferences = CustomSharedPreferences(context)
         customSharedPreferences.setTerminalUserLogin(terminalUser.terminalUserTerminalId!!,terminalUser.terminalUsertaxId!!,
             terminalUser.terminalUserStoreId!!,terminalUser.terminalUserPassword!!,terminalUser.terminalUserFullName!!,terminalUser.terminalUserDate!!,
-            terminalUser.terminalUserTime!!,terminalUser.terminalUserIptalIade!!,terminalUser.terminalUserTahsilat!!,
-            terminalUser.terminalUserKasiyerGoruntuleme!!,terminalUser.terminalUserKasiyerEklemeDuzenleme!!,terminalUser.terminalUserKasiyerSilme!!,
-            terminalUser.terminalUserUrunGoruntuleme!!,terminalUser.terminalUserUrunEklemeDuzenleme!!,terminalUser.terminalUserUrunSilme!!,
-            terminalUser.terminalUserTumRaporlariGoruntule!!,terminalUser.terminalUserRaporKaydetGonder!!,terminalUser.terminalUserPosYonetimi!!,
+            terminalUser.terminalUserTime!!,terminalUser.canCancelRefund!!,terminalUser.canCollectPayment!!,
+            terminalUser.canViewCashiers!!,terminalUser.canAddEditCashiers!!,terminalUser.canDeleteCashiers!!,
+            terminalUser.canViewProducts!!,terminalUser.canAddEditProducts!!,terminalUser.canDeleteProducts!!,
+            terminalUser.canViewAllReports!!,terminalUser.canSaveSendReports!!,terminalUser.canManagePos!!,
             terminalUser.terminalUserAdmin!!, context)
 
         if (isAdmin) {

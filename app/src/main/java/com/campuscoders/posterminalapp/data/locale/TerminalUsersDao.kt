@@ -2,6 +2,7 @@ package com.campuscoders.posterminalapp.data.locale
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
@@ -11,6 +12,8 @@ interface TerminalUsersDao {
     @Insert
     suspend fun insertTerminalUser(terminalUsers: TerminalUsers): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: List<TerminalUsers>)
     @Query("SELECT * FROM TerminalUsers WHERE terminal_user_terminal_id = :terminalId")
     suspend fun queryTerminalUser(terminalId: String): TerminalUsers?
 

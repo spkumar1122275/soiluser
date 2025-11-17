@@ -102,17 +102,17 @@ class AddCashierFragment : Fragment() {
             terminalUserPassword = binding.textInputEditTextPassword.text.toString()
             terminalUserDate = TimeAndDate.getLocalDate(Constants.DATE_FORMAT)
             terminalUserTime = TimeAndDate.getTime()
-            terminalUserIptalIade = binding.switchIptalIade.isChecked
-            terminalUserTahsilat = binding.switchTahsilat.isChecked
-            terminalUserKasiyerGoruntuleme = binding.switchKasiyerGoruntuleme.isChecked
-            terminalUserKasiyerEklemeDuzenleme = binding.switchKasiyerEklemeDuzenleme.isChecked
-            terminalUserKasiyerSilme = binding.switchKasiyerSilme.isChecked
-            terminalUserUrunGoruntuleme = binding.switchUrunGoruntuleme.isChecked
-            terminalUserUrunEklemeDuzenleme = binding.switchUrunEklemeDuzenleme.isChecked
-            terminalUserUrunSilme = binding.switchUrunSilme.isChecked
-            terminalUserTumRaporlariGoruntule = binding.switchTumRaporlariGoruntuleme.isChecked
-            terminalUserRaporKaydetGonder = binding.switchRaporKaydetGonder.isChecked
-            terminalUserPosYonetimi = binding.switchPosYonetimi.isChecked
+            canCancelRefund = binding.switchIptalIade.isChecked
+            canCollectPayment = binding.switchTahsilat.isChecked
+            canViewCashiers = binding.switchKasiyerGoruntuleme.isChecked
+            canAddEditCashiers = binding.switchKasiyerEklemeDuzenleme.isChecked
+            canDeleteCashiers = binding.switchKasiyerSilme.isChecked
+            canViewProducts = binding.switchUrunGoruntuleme.isChecked
+            canAddEditProducts = binding.switchUrunEklemeDuzenleme.isChecked
+            canDeleteProducts = binding.switchUrunSilme.isChecked
+            canViewAllReports = binding.switchTumRaporlariGoruntuleme.isChecked
+            canSaveSendReports = binding.switchRaporKaydetGonder.isChecked
+            canManagePos = binding.switchPosYonetimi.isChecked
             terminalUserAdmin = binding.switchAdmin.isChecked
         }
     }
@@ -122,17 +122,17 @@ class AddCashierFragment : Fragment() {
         binding.textInputEditTextCashierNameSurname.setText(terminalUsers.terminalUserFullName)
         binding.textInputEditTextPassword.setText(terminalUsers.terminalUserPassword)
         binding.textInputEditTextPasswordAgain.setText(terminalUsers.terminalUserPassword)
-        binding.switchIptalIade.isChecked = terminalUsers.terminalUserIptalIade!!
-        binding.switchTahsilat.isChecked = terminalUsers.terminalUserTahsilat!!
-        binding.switchKasiyerGoruntuleme.isChecked = terminalUsers.terminalUserKasiyerGoruntuleme!!
-        binding.switchKasiyerEklemeDuzenleme.isChecked = terminalUsers.terminalUserKasiyerEklemeDuzenleme!!
-        binding.switchKasiyerSilme.isChecked = terminalUsers.terminalUserKasiyerSilme!!
-        binding.switchUrunGoruntuleme.isChecked = terminalUsers.terminalUserUrunGoruntuleme!!
-        binding.switchUrunEklemeDuzenleme.isChecked = terminalUsers.terminalUserUrunEklemeDuzenleme!!
-        binding.switchUrunSilme.isChecked = terminalUsers.terminalUserUrunSilme!!
-        binding.switchTumRaporlariGoruntuleme.isChecked = terminalUsers.terminalUserTumRaporlariGoruntule!!
-        binding.switchRaporKaydetGonder.isChecked = terminalUsers.terminalUserRaporKaydetGonder!!
-        binding.switchPosYonetimi.isChecked = terminalUsers.terminalUserPosYonetimi!!
+        binding.switchIptalIade.isChecked = terminalUsers.canCancelRefund!!
+        binding.switchTahsilat.isChecked = terminalUsers.canCollectPayment!!
+        binding.switchKasiyerGoruntuleme.isChecked = terminalUsers.canViewCashiers!!
+        binding.switchKasiyerEklemeDuzenleme.isChecked = terminalUsers.canAddEditCashiers!!
+        binding.switchKasiyerSilme.isChecked = terminalUsers.canDeleteCashiers!!
+        binding.switchUrunGoruntuleme.isChecked = terminalUsers.canViewProducts!!
+        binding.switchUrunEklemeDuzenleme.isChecked = terminalUsers.canAddEditProducts!!
+        binding.switchUrunSilme.isChecked = terminalUsers.canDeleteProducts!!
+        binding.switchTumRaporlariGoruntuleme.isChecked = terminalUsers.canViewAllReports!!
+        binding.switchRaporKaydetGonder.isChecked = terminalUsers.canSaveSendReports!!
+        binding.switchPosYonetimi.isChecked = terminalUsers.canManagePos!!
         binding.switchAdmin.isChecked = terminalUsers.terminalUserAdmin!!
     }
 

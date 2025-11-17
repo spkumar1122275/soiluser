@@ -7,14 +7,14 @@
     <string name="log_in">Log \nIn</string>
     <string name="password">Password</string>
     <string name="phone_no">Phone Number</string>
-    <string name="tckn_vkn">TCKN/VKN</string>
+    <string name="tckn_vkn">PAN No</string>
     <string name="terminal_id">Terminal ID</string>
     <string name="member_id">Merchant ID</string>
     <string name="verification_code">Verification Code</string>
     <string name="verification_content">Please enter the code sent to your phone number.</string>
-    <string name="sample_phone_number">(+90 538 XXX XX 37)</string>
+    <string name="sample_phone_number">(+91 998 XXX XX 37)</string>
     <string name="change_password">Change Password</string>
-    <string name="change_pass_content">Please enter your TCKN/VKN and phone number to create a new password.</string>
+    <string name="change_pass_content">Please enter your PAN number and phone number to create a new password.</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="save">Save</string>
@@ -31,7 +31,7 @@
     <string name="timer">2:00</string>
     <string name="not_matched">Incorrect password, please try again</string>
     <string name="matched">Login Successful</string>
-    <string name="pass_db_null">PasswordFromDb is null</string>
+    <string name="pass_db_null">Password From Db is null</string>
     <string name="uye_isyeri_no">Merchant Number</string>
     <string name="cashier_forgot_password_warn">Only Manager accounts can change passwords</string>
     <string name="empty_fields">Please fill in all fields.</string>
@@ -100,8 +100,8 @@
     <string name="no_authorization">You are not authorized.</string>
 
     <string name="user_terminal_id">terminal_id</string>
-    <string name="user_pan_no">vkn_tckn</string>
-    <string name="user_store_no">merchant_no</string>
+    <string name="user_pan_no">PAN</string>
+    <string name="user_store_no">store_id</string>
     <string name="user_password">password</string>
     <string name="user_full_name">full_name</string>
     <string name="user_date">date</string>

@@ -1,5 +1,6 @@
 package com.campuscoders.posterminalapp.data.remote.api
 
+import com.campuscoders.posterminalapp.data.remote.dto.CompanyApiResponse
 import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
 import com.campuscoders.posterminalapp.data.remote.dto.TerminalUsersResponse
 import retrofit2.Response
@@ -24,5 +25,12 @@ interface AuthApiService {
         @Query("access_token") accessToken: String,
         @Query("terminal_id") terminalId: String
     ): Response<TerminalUsersResponse>
+
+    @GET("company")
+    suspend fun getCompanyData(
+        @Query("access_token") accessToken: String,
+        @Query("terminal_id") terminalId: String
+    ): Response<CompanyApiResponse>
+
 
 }
