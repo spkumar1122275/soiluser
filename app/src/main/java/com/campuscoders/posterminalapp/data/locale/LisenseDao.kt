@@ -14,6 +14,13 @@ interface LicenseDao {
     suspend fun insertAll(licenses: List<License>)
 
 
+    @Query("DELETE FROM Licenses")
+    suspend fun deleteAll()
+
+    @Query("DELETE FROM Licenses WHERE store_id = :storeId")
+    suspend fun deleteByStoreId(storeId: Int)
+
+
 
     @Query("SELECT * FROM Licenses WHERE store_id = :storeId")
     suspend fun getLicenses(storeId: Int): List<License>

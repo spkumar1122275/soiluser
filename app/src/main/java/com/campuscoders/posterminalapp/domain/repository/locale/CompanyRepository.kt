@@ -40,4 +40,22 @@ class CompanyRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun deleteAllByStoreId(storeId: Int): Result<Unit> {
+        return try {
+            db.withTransaction {
+
+                // Order matters: delete children first, then company
+                db.terminalUsersDao().deleteByStoreId(storeId)
+                db.mainUserDao().deleteByStoreId(storeId)
+                db.licenseDao().deleteByStoreId(storeId)
+                db.companyDao().deleteByStoreId(storeId)
+            }
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

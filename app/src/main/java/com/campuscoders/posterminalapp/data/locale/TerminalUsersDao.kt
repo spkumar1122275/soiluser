@@ -29,6 +29,9 @@ interface TerminalUsersDao {
     @Query("DELETE FROM TerminalUsers WHERE terminalUserId = :terminalId")
     suspend fun deleteTerminalUser(terminalId: Int): Int
 
+    @Query("DELETE FROM TerminalUsers WHERE terminal_user_store_id = :storeId")
+    suspend fun deleteByStoreId(storeId: Int)
+
     @Query("SELECT * FROM TerminalUsers")
     suspend fun queryAllTerminalUsers(): List<TerminalUsers>?
 
