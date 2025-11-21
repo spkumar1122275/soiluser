@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.campuscoders.posterminalapp.R
 import com.campuscoders.posterminalapp.databinding.FragmentLoginBinding
+import com.campuscoders.posterminalapp.di.SecurityUtils
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.presentation.login.LoginViewModel
 import com.campuscoders.posterminalapp.utils.*
@@ -56,7 +57,7 @@ class LoginFragment : Fragment() {
             val password = binding.etPassword.text.toString().trim()
 
             if (terminalId.isEmpty() || taxId.isEmpty() || memberStore.isEmpty() || password.isEmpty()) {
-                toast(requireContext(), "Lütfen tüm alanları doldurun", true)
+                toast(requireContext(), "Please fill in all fields", true)
                 return@setOnClickListener
             }
 

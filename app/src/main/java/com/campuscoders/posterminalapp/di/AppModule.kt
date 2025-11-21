@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.campuscoders.posterminalapp.data.locale.CategoriesDao
 import com.campuscoders.posterminalapp.data.locale.CustomersDao
 import com.campuscoders.posterminalapp.data.locale.MainUserDao
+import com.campuscoders.posterminalapp.data.locale.DepartmentDao
 import com.campuscoders.posterminalapp.data.locale.OrdersDao
 import com.campuscoders.posterminalapp.data.locale.OrdersProductsDao
 import com.campuscoders.posterminalapp.data.locale.PosDatabase
@@ -41,6 +42,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideMainUserDao(database: PosDatabase) = database.mainUserDao()
+
+    @Singleton
+    @Provides
+    fun providedepartmentDAO(database: PosDatabase) = database.departmentDao()
+
 
     @Singleton
     @Provides

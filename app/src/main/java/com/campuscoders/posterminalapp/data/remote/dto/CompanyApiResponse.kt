@@ -1,12 +1,12 @@
 package com.campuscoders.posterminalapp.data.remote.dto
 
+
 import com.google.gson.annotations.SerializedName
 
+
+
 data class CompanyApiResponse(
-    @SerializedName("company") val company: ApiCompany?,
-    @SerializedName("licenses") val licenses: List<ApiLicense>?,
-    @SerializedName("main_user") val mainUser: ApiMainUser?,
-    @SerializedName("terminal_users") val terminalUsers: List<ApiTerminalUser>?
+    @SerializedName("company") val company: ApiCompany?
 )
 
 
@@ -16,43 +16,70 @@ data class ApiCompany(
     val address: String?,
     val phone: String?,
     val tax_id: String?,
-    val store_id: Int
+    val store_id: Int,
+
+    @SerializedName("licenses")
+    val licenses: List<ApiLicense>?,
+
+    @SerializedName("departments")
+    val departments: List<ApiDepartment>?
 )
 
+
 data class ApiLicense(
+    val license_id: Int,
     val license_name: String?,
     val license_ref_no: String?,
     val valid_till: String?
 )
 
-data class ApiMainUser(
-    val terminal_id: String?,
-    val pan: String?,
-    val store_id: String?,
-    val password: String?,
-    val cellphone_number: String?,
-    val first_name: String?,
-    val last_name: String?,
-    val role: String?,
-    val emp_no: Int?,
-    val department_name: String?,
-    val department_location: String?
+
+data class ApiDepartment(
+    val dept_id: Int,
+    val dept_name: String,
+    val dept_location: String,
+
+    @SerializedName("main_users")
+    val mainUsers: List<ApiMainUser>?,
+
+    @SerializedName("terminal_users")
+    val terminalUsers: List<ApiTerminalUser>?
 )
 
-data class ApiTerminalUser(
+
+data class ApiMainUser(
+    val emp_no: Int?,
     val terminal_id: String?,
     val pan: String?,
-    val store_id: String?,
     val password: String?,
-    val cellphone_number: String?,
     val first_name: String?,
     val last_name: String?,
+    val cellphone_number: String?,
     val role: String?,
-    val emp_no: Int?,
-    val department_name: String?,
-    val department_location: String?,
-    val permissions: ApiPermissions
+    val is_admin: Boolean
 )
+
+
+data class ApiTerminalUser(
+    val emp_no: Int?,
+    val terminal_id: String?,
+    val pan: String?,
+    val password: String?,
+    val first_name: String?,
+    val last_name: String?,
+    val cellphone_number: String?,
+    val role: String?,
+
+    @SerializedName("licenses")
+    val licenses: List<ApiTerminalUserLicense>?
+)
+
+
+data class ApiTerminalUserLicense(
+    val license_id: Int,
+    val license_name: String?
+)
+
 
 data class ApiPermissions(
     val can_cancel_refund: Boolean,
@@ -68,3 +95,5 @@ data class ApiPermissions(
     val can_manage_pos: Boolean,
     val is_admin: Boolean
 )
+
+

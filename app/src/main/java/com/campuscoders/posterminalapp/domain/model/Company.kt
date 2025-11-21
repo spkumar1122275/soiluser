@@ -6,8 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Company")
 data class Company(
+
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "store_id") val storeId: Int,
+
+    @ColumnInfo(name = "company_id") val companyId: Int?,   // NEW
 
     @ColumnInfo(name = "company_name") val companyName: String?,
     @ColumnInfo(name = "address") val address: String?,

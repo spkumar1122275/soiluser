@@ -29,8 +29,9 @@ class CompanyRepository(
 
             db.withTransaction {
                 db.companyDao().insertCompany(bundle.company)
+                db.departmentDao().insertAll(bundle.departments)
                 db.licenseDao().insertAll(bundle.licenses)
-                db.mainUserDao().insertMainUser(bundle.mainUser)
+                db.mainUserDao().insertAll(bundle.mainUsers)
                 db.terminalUsersDao().insertAll(bundle.terminalUsers)
             }
 
@@ -49,6 +50,7 @@ class CompanyRepository(
                 db.terminalUsersDao().deleteByStoreId(storeId)
                 db.mainUserDao().deleteByStoreId(storeId)
                 db.licenseDao().deleteByStoreId(storeId)
+                db.departmentDao().deleteByStoreId(storeId)
                 db.companyDao().deleteByStoreId(storeId)
             }
 

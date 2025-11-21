@@ -1,10 +1,26 @@
 package com.campuscoders.posterminalapp.domain.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
-@Entity (tableName = "TerminalUsers")
+@Entity (
+    tableName = "TerminalUsers",
+    foreignKeys = [
+        ForeignKey(
+            entity = Department::class,
+            parentColumns = ["dept_id"],
+            childColumns = ["terminal_dept_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["terminal_dept_id"])]
+)
+
 data class TerminalUsers(
     @ColumnInfo(name = "terminal_user_terminal_id") var terminalUserTerminalId: String? = null,  //FK
     @ColumnInfo(name = "terminal_user_pan") var terminalUsertaxId: String? = null,
@@ -32,10 +48,18 @@ data class TerminalUsers(
     @ColumnInfo(name = "first_name") val terminalUserfirstName: String? = null,
     @ColumnInfo(name = "last_name") val terminalUserlastName: String? = null,
     @ColumnInfo(name = "role") val terminalUserrole: String? = null,
-    @ColumnInfo(name = "emp_no") val terminalUserempNo: Int? = null,
-    @ColumnInfo(name = "department_name") val terminalUserdepartmentName: String? = null,
-    @ColumnInfo(name = "department_location") val terminalUserdepartmentLocation: String? = null
+    @ColumnInfo(name = "terminal_dept_id") val terminalUserDeptId: Int? = null,
+    @ColumnInfo(name = "emp_no") val terminalUserempNo: Int? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var terminalUserId: Int = 0
 }
+
+data class DepartmentWithTerminalUsers(
+    @Embedded val department: Department,
+    @Relation(
+        parentColumn = "dept_id",
+        entityColumn = "terminal_dept_id"
+    )
+    val terminalUsers: List<TerminalUsers>
+)
