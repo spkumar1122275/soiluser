@@ -43,7 +43,7 @@ class AddCashierFragment : Fragment() {
 
         arguments?.let {
             val terminalId = it.getInt("terminal_id")
-            viewModel.getTerminalUser(terminalId.toString())
+            viewModel.getTerminalUser(terminalId)
             getTerminalIdControl = false
             binding.buttonSave.text = "Güncelle"
         }
@@ -176,6 +176,7 @@ class AddCashierFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(), it.message ?: "Error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusSaveTerminalUser.observe(viewLifecycleOwner) {
@@ -195,6 +196,7 @@ class AddCashierFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(), it.message ?: "Error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusLastTerminalUserId.observe(viewLifecycleOwner) {
@@ -210,6 +212,7 @@ class AddCashierFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(), it.message ?: "Error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

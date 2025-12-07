@@ -22,7 +22,7 @@ class ForgetPasswordViewModel @Inject constructor(
     fun controlMainUserCellPhone(taxId: String, cellPhoneNumber: String) {
         _statusIsMatched.value = Resource.Loading(null)
         viewModelScope.launch {
-            val response = fetchMainUserCellPhoneNumberUseCase.executeFetchMainUserCellPhoneNumber(taxId)
+            val response = fetchMainUserCellPhoneNumberUseCase.execute(taxId)
             when(response) {
                 is Resource.Success -> {
                     val cellPhoneNumberFromDb = response.data
@@ -40,6 +40,7 @@ class ForgetPasswordViewModel @Inject constructor(
                 is Resource.Error -> {
                     _statusIsMatched.value = Resource.Error(false,response.message?:"Error CellPhoneNumber")
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

@@ -107,6 +107,7 @@ class DailyReportFragment : Fragment() {
                     binding.progressBarDailyReport.hide()
                     toast(requireContext(),"Hata! Kayıtlar getirilemedi",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

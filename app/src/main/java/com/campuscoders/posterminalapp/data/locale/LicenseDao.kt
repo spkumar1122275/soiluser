@@ -8,8 +8,9 @@ import com.campuscoders.posterminalapp.domain.model.License
 
 @Dao
 interface LicenseDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLicense(license: License)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(licenses: List<License>)
 

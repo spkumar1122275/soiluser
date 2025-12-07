@@ -1,18 +1,15 @@
 package com.campuscoders.posterminalapp.data.mapper
 
 import com.campuscoders.posterminalapp.data.remote.dto.CompanyApiResponse
-import com.campuscoders.posterminalapp.domain.model.Company
-import com.campuscoders.posterminalapp.domain.model.Department
-import com.campuscoders.posterminalapp.domain.model.License
-import com.campuscoders.posterminalapp.domain.model.MainUser
-import com.campuscoders.posterminalapp.domain.model.TerminalUsers
+import com.campuscoders.posterminalapp.domain.model.*
 
 data class CompanyBundle(
     val company: Company,
     val licenses: List<License>,
     val departments: List<Department>,
     val mainUsers: List<MainUser>,
-    val terminalUsers: List<TerminalUsers>
+    val terminalUsers: List<TerminalUsers>,
+    val terminalUserLicenses: List<TerminalUserLicense>
 )
 
 fun CompanyApiResponse.toBundle(): CompanyBundle {
@@ -33,11 +30,15 @@ fun CompanyApiResponse.toBundle(): CompanyBundle {
     // Flattened Terminal Users (from all departments)
     val terminalUserEntities = apiCompany.toTerminalUserEntities()
 
+    // Flattened Terminal User Licenses (from all departments/terminal users)
+    val terminalUserLicenseEntities = apiCompany.toTerminalUserLicenseEntities()
+
     return CompanyBundle(
         company = companyEntity,
         licenses = licenseEntities,
         departments = departmentEntities,
         mainUsers = mainUserEntities,
-        terminalUsers = terminalUserEntities
+        terminalUsers = terminalUserEntities,
+        terminalUserLicenses = terminalUserLicenseEntities
     )
 }

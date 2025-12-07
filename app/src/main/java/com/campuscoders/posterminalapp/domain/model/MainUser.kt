@@ -14,9 +14,15 @@ import androidx.room.PrimaryKey
             parentColumns = ["store_id"],
             childColumns = ["main_user_store_id"],
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Department::class,
+            parentColumns = ["dept_id"],
+            childColumns = ["main_user_department_id"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["main_user_store_id"])]
+    indices = [Index(value = ["main_user_store_id"]), Index(value = ["main_user_department_id"])]
 )
 data class MainUser(
     @ColumnInfo(name = "main_user_terminal_id") var mainUserTerminalId: String? = null,

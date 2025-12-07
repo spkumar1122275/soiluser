@@ -128,6 +128,7 @@ class ShoppingCartFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(), it.message ?: "statusSaveToDatabase error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         baseViewModel.statusShoppingCartQuantity.observe(viewLifecycleOwner) {

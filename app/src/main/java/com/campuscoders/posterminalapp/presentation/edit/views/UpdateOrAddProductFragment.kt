@@ -101,6 +101,7 @@ class UpdateOrAddProductFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusAddProduct.observe(viewLifecycleOwner) {
@@ -115,6 +116,7 @@ class UpdateOrAddProductFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusUpdateProduct.observe(viewLifecycleOwner) {
@@ -129,6 +131,7 @@ class UpdateOrAddProductFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

@@ -1,18 +1,12 @@
 package com.campuscoders.posterminalapp.presentation.login
 
-import android.content.Context
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.campuscoders.posterminalapp.R
-import com.campuscoders.posterminalapp.domain.model.TerminalUsers
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchMainUserPasswordUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserByMemberStoreIdUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserPasswordUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.FetchTerminalUserUseCase
-import com.campuscoders.posterminalapp.domain.use_case.login.LoginWithApiUseCase
-import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
+import com.campuscoders.posterminalapp.di.SecurityUtils
+import com.campuscoders.posterminalapp.domain.model.AnylocalUser
+import com.campuscoders.posterminalapp.domain.repository.SecondAuthRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,192 +14,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginTwoViewModel @Inject constructor(
-    private val fetchMainUserPasswordUseCase: FetchMainUserPasswordUseCase,
-    private val fetchTerminalUserPasswordUseCase: FetchTerminalUserPasswordUseCase,
-    private val fetchTerminalUserUseCase: FetchTerminalUserUseCase,
-    private val fetchTerminalUserByMemberStoreIdUseCase: FetchTerminalUserByMemberStoreIdUseCase,
-    private val loginWithApiUseCase: LoginWithApiUseCase
-): ViewModel() {
+    private val authRepository: SecondAuthRepository
+) : ViewModel() {
 
-    interface PasswordCallback {
-        fun onPasswordFetched(passwordFromCallBack: String?)
-        fun onError(message: String)
-    }
+    private val _loginState = MutableLiveData<Resource<AnylocalUser>>()
+    val loginState: LiveData<Resource<AnylocalUser>> get() = _loginState
 
-    private var _statusControlPassword = MutableLiveData<Resource<Boolean>>()
-    val statusControlPassword: LiveData<Resource<Boolean>>
-        get() = _statusControlPassword
+    /**
+     * Offline login (TerminalUser + MainUser locally)
+     */
+    fun loginOffline(terminalId: String, password: String) {
+        _loginState.value = Resource.Loading(null)
 
-    private fun fetchMainUserPassword(memberStoreId: String, callback: PasswordCallback) {
         viewModelScope.launch {
-            val response = fetchMainUserPasswordUseCase.executeFetchMainUserPassword(memberStoreId)
-            when(response) {
-                is Resource.Success -> {
-                    callback.onPasswordFetched(response.data)
-                }
-                is Resource.Loading -> {
-                    _statusControlPassword.value = Resource.Loading(null)
-                }
-                is Resource.Error -> {
-                    _statusControlPassword.value = Resource.Error(null,response.message?:"Error! (fetchMainUserPasswordUseCase)")
-                    callback.onError(response.message?:"Error! (fetchMainUserPasswordUseCase)")
-                }
-            }
-        }
-    }
+            val hashedPassword = SecurityUtils.hashPasswordSHA256(password)
 
-    private fun fetchTerminalUserPassword(terminalId: String, callback: PasswordCallback) {
-        viewModelScope.launch {
-            val response = fetchTerminalUserPasswordUseCase.executeFetchTerminalUserPassword(terminalId)
-            when(response) {
-                is Resource.Success -> {
-                    callback.onPasswordFetched(response.data)
-                }
-                is Resource.Loading -> {
-                    _statusControlPassword.value = Resource.Loading(null)
-                }
-                is Resource.Error -> {
-                    _statusControlPassword.value = Resource.Error(null,response.message?:"Error! (fetchTerminalUserPasswordUseCase)")
-                    callback.onError(response.message?:"Error! (fetchTerminalUserPasswordUseCase)")
-                }
-            }
-        }
-    }
+            val user = authRepository.loginOffline(terminalId, hashedPassword)
 
-    private fun fetchTerminalUser(id: String, isAdmin: Boolean, context: Context, password: String) {
-        viewModelScope.launch {
-            if (isAdmin) {
-                val response = fetchTerminalUserByMemberStoreIdUseCase.executeFetchTerminalUserByMemberStore(id)
-                when(response) {
-                    is Resource.Success -> {
-                        comparePasswords(response,password,isAdmin,context)
-                    }
-                    is Resource.Loading -> {
-                        _statusControlPassword.value = Resource.Loading(null)
-                    }
-                    is Resource.Error -> {
-                        _statusControlPassword.value = Resource.Error(null,response.message?:"Error (fetchTerminalUserByMemberStoreIdUseCase)")
-                    }
-                }
+            if (user == null) {
+                _loginState.value = Resource.Error(null, "User not found")
             } else {
-                val response = fetchTerminalUserUseCase.executeFetchTerminalUser(id)
-                when(response) {
-                    is Resource.Success -> {
-                        comparePasswords(response,password,isAdmin,context)
-                    }
-                    is Resource.Loading -> {
-                        _statusControlPassword.value = Resource.Loading(null)
-                    }
-                    is Resource.Error -> {
-                        _statusControlPassword.value = Resource.Error(null,response.message?:"Error (fetchTerminalUserUseCase)")
-                    }
-                }
+                authRepository.saveSession(user)
+                _loginState.value = Resource.Success(user)
             }
         }
     }
 
-    private fun comparePasswords(response: Resource<TerminalUsers>, password: String, isAdmin: Boolean, context: Context) {
-        if (response.data != null) {
-            if (response.data.terminalUserPassword == password) {
-                _statusControlPassword.value = Resource.Success(true)
-                saveToSharedPreferences(response.data,isAdmin, context)
-            } else {
-                _statusControlPassword.value = Resource.Error(false, context.getString(R.string.not_matched))
-            }
-        } else {
-            _statusControlPassword.value = Resource.Error(false,context.getString(R.string.pass_db_null))
-        }
-    }
 
-    private fun saveToSharedPreferences(terminalUser: TerminalUsers, isAdmin: Boolean, context: Context) {
-        val customSharedPreferences = CustomSharedPreferences(context)
-        customSharedPreferences.setTerminalUserLogin(terminalUser.terminalUserTerminalId!!,terminalUser.terminalUsertaxId!!,
-            terminalUser.terminalUserStoreId!!,terminalUser.terminalUserPassword!!,terminalUser.terminalUserFullName!!,terminalUser.terminalUserDate!!,
-            terminalUser.terminalUserTime!!,terminalUser.canCancelRefund!!,terminalUser.canCollectPayment!!,
-            terminalUser.canViewCashiers!!,terminalUser.canAddEditCashiers!!,terminalUser.canDeleteCashiers!!,
-            terminalUser.canViewProducts!!,terminalUser.canAddEditProducts!!,terminalUser.canDeleteProducts!!,
-            terminalUser.canViewAllReports!!,terminalUser.canSaveSendReports!!,terminalUser.canManagePos!!,
-            terminalUser.terminalUserAdmin!!, context)
-
-        if (isAdmin) {
-            customSharedPreferences.setMainUserLoginRememberMeManager(true, context)
-        } else {
-            customSharedPreferences.setMainUserLoginRememberMeCashier(true, context)
-        }
-    }
-
-    fun controlPassword(id: String, password: String, isAdmin: Boolean, rememberMe: Boolean, context: Context) {
-        _statusControlPassword.value = Resource.Loading(null)
-        if (rememberMe) {
-            fetchTerminalUser(id, isAdmin, context, password)
-        } else {
-            if (isAdmin) {
-                controlMainUserPassword(id, password, context)
-            } else {
-                controlTerminalUserPassword(id, password, context)
-            }
-        }
-    }
-
-    private fun controlMainUserPassword(memberStoreId: String, password: String, context: Context) {
-        viewModelScope.launch {
-            // Use API for authentication
-            val response = loginWithApiUseCase.executeLoginWithApi(
-                terminalId = "", // Terminal ID not needed for manager login
-                taxId = "", // Tax ID will be fetched from API response
-                memberId = memberStoreId,
-                password = password
-            )
-            
-            when (response) {
-                is Resource.Success -> {
-                    val loginResponse = response.data
-                    if (loginResponse != null) {
-                        _statusControlPassword.value = Resource.Success(true)
-                        val customSharedPreferences = CustomSharedPreferences(context)
-                        customSharedPreferences.setMainUserLoginRememberMeManager(false, context)
-                    } else {
-                        _statusControlPassword.value = Resource.Error(false, context.getString(R.string.not_matched))
-                    }
-                }
-                is Resource.Error -> {
-                    _statusControlPassword.value = Resource.Error(false, response.message ?: context.getString(R.string.not_matched))
-                }
-                is Resource.Loading -> {
-                    _statusControlPassword.value = Resource.Loading(null)
-                }
-            }
-        }
-    }
-
-    private fun controlTerminalUserPassword(terminalId: String, password: String, context: Context) {
-        viewModelScope.launch {
-            // Use API for authentication
-            val response = loginWithApiUseCase.executeLoginWithApi(
-                terminalId = terminalId,
-                taxId = "", // Tax ID will be fetched from API response
-                memberId = "", // Member ID not needed for cashier login
-                password = password
-            )
-            
-            when (response) {
-                is Resource.Success -> {
-                    val loginResponse = response.data
-                    if (loginResponse != null) {
-                        _statusControlPassword.value = Resource.Success(true)
-                        val customSharedPreferences = CustomSharedPreferences(context)
-                        customSharedPreferences.setMainUserLoginRememberMeCashier(false, context)
-                    } else {
-                        _statusControlPassword.value = Resource.Error(false, context.getString(R.string.not_matched))
-                    }
-                }
-                is Resource.Error -> {
-                    _statusControlPassword.value = Resource.Error(false, response.message ?: context.getString(R.string.not_matched))
-                }
-                is Resource.Loading -> {
-                    _statusControlPassword.value = Resource.Loading(null)
-                }
-            }
-        }
+    /** Reset state (for UI to clear error/messages) */
+    fun resetLoginState() {
+        _loginState.value = Resource.Idle()
     }
 }

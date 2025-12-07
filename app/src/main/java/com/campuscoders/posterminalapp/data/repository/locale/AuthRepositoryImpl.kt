@@ -2,20 +2,27 @@ package com.campuscoders.posterminalapp.data.repository.locale
 
 import com.campuscoders.posterminalapp.data.locale.MainUserDao
 import com.campuscoders.posterminalapp.data.locale.TerminalUsersDao
+import com.campuscoders.posterminalapp.data.mapper.toAnyUser
+import com.campuscoders.posterminalapp.data.mapper.toUserData
 import com.campuscoders.posterminalapp.data.remote.api.AuthApiService
 import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
-import com.campuscoders.posterminalapp.data.remote.dto.TerminalUsersResponse
+import com.campuscoders.posterminalapp.domain.model.AnyUser
 import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.domain.model.TerminalUsers
-import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
-import retrofit2.Response
+import com.campuscoders.posterminalapp.domain.repository.AuthRepository
+import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
 import javax.inject.Inject
 
-class LoginRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl @Inject constructor(
     private val mainUserDao: MainUserDao,
     private val terminalUsersDao: TerminalUsersDao,
-    private val authApiService: AuthApiService
-): LoginRepository {
+    private val api: AuthApiService,
+    private val prefs: CustomSharedPreferences,
+) : AuthRepository {
+
+    // ------------------------------
+    // DATABASE (LOCAL ROOM) OPERATIONS
+    // ------------------------------
 
     override suspend fun saveMainUserToDatabase(mainUser: MainUser): Long {
         return mainUserDao.insertMainUser(mainUser)
@@ -57,20 +64,51 @@ class LoginRepositoryImpl @Inject constructor(
         return terminalUsersDao.updateTerminalUserPassword(taxId, newPassword)
     }
 
-    override suspend fun loginWithApi(
+    // ------------------------------
+    // ONLINE LOGIN
+    // ------------------------------
+
+    override suspend fun loginOnline(
         terminalId: String,
         taxId: String,
-        memberId: String,
+        storeId: String,
         password: String
-    ): Response<LoginResponse> {
-        return authApiService.login(terminalId, taxId, memberId, password)
+    ): Result<LoginResponse> = runCatching {
+        val response = api.login(terminalId, taxId, storeId, password)
+        if (!response.isSuccessful) throw Exception("API error: ${response.code()}")
+        response.body() ?: throw Exception("Empty body")
     }
 
-    override suspend fun fetchTerminalUsersFromApi(
-        accessToken: String,
-        terminalId: String
-    ): Response<TerminalUsersResponse> {
-        return authApiService.getTerminalUsers(accessToken, terminalId)
+    // ------------------------------
+    // OFFLINE LOGIN
+    // ------------------------------
+
+    override suspend fun loginOffline(terminalId: String, password: String): AnyUser? {
+        return prefs.getUserData()?.toAnyUser()
     }
 
+    // ------------------------------
+    // SESSION MANAGEMENT (SharedPreferences)
+    // ------------------------------
+
+    override fun saveSession(user: AnyUser) {
+        prefs.saveUserData(user.toUserData())
+        prefs.saveLoginTimestamp()
+    }
+
+    override fun getSavedUser(): AnyUser? {
+        return prefs.getUserData()?.toAnyUser()
+    }
+
+    override fun getSavedRole(): String? {
+        return prefs.getUserRole()
+    }
+
+    override fun isLoginExpired(): Boolean {
+        return prefs.isLoginExpired()
+    }
+
+    override fun clearSession() {
+        prefs.clearUserData()
+    }
 }

@@ -6,7 +6,7 @@ import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
 class FetchTerminalUserByIdUseCase @Inject constructor(private val repository: CashierAndReportRepository){
-    suspend fun executeFetchTerminalUserById(terminalId: String): Resource<TerminalUsers> {
+    suspend fun executeFetchTerminalUserById(terminalId: Int): Resource<TerminalUsers> {
         return try {
             val response = repository.fetchTerminalUserById(terminalId)
             response?.let {

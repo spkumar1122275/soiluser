@@ -1,10 +1,11 @@
 package com.campuscoders.posterminalapp.domain.use_case.login
 
-import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
+import com.campuscoders.posterminalapp.data.locale.TerminalUsersDao
+import com.campuscoders.posterminalapp.domain.repository.AuthRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
-class FetchTerminalUserPasswordUseCase @Inject constructor(private val repository: LoginRepository) {
+class FetchTerminalUserPasswordUseCase @Inject constructor(private val repository: AuthRepository) {
     suspend fun executeFetchTerminalUserPassword(terminalId: String): Resource<String> {
         return try {
             val response = repository.fetchTerminalUserPassword(terminalId)

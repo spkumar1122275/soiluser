@@ -119,6 +119,7 @@ class CategoriesFragment : Fragment() {
                     binding.progressBarCategories.hide()
                     toast(requireContext(),it.message?:"Error Categories",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

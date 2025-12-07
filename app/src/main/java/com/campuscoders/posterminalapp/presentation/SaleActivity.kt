@@ -63,6 +63,7 @@ class SaleActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     Toast.makeText(this,it.message?:"Error Product",Toast.LENGTH_SHORT).show()
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusShoppingCartQuantity.observe(this) {

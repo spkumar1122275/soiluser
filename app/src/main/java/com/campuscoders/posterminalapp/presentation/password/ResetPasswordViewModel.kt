@@ -66,10 +66,10 @@ class ResetPasswordViewModel @Inject constructor(
         _statusIsUpdated.value = Resource.Loading(null)
         viewModelScope.launch {
             // VKN_TCKN -> SharedPreference'den çekilecek
-            val responseFromMainUserPasswordUseCase = updateMainUserPasswordUseCase.executeUpdateMainUserPassword(VKN_TCKN,newPassword)
+            val responseFromMainUserPasswordUseCase = updateMainUserPasswordUseCase.execute(VKN_TCKN, newPassword)
             when(responseFromMainUserPasswordUseCase) {
                 is Resource.Success -> {
-                    val responseFromTerminalUserPasswordUseCase = updateTerminalUserPasswordUseCase.executeUpdateTerminalUserPassword(VKN_TCKN,newPassword)
+                    val responseFromTerminalUserPasswordUseCase = updateTerminalUserPasswordUseCase.execute(VKN_TCKN,newPassword)
                     when(responseFromTerminalUserPasswordUseCase) {
                         is Resource.Success -> {
                             _statusIsUpdated.value = Resource.Success(true)
@@ -80,6 +80,7 @@ class ResetPasswordViewModel @Inject constructor(
                         is Resource.Error -> {
                             _statusIsUpdated.value = Resource.Error(false,responseFromMainUserPasswordUseCase.message?:"Update failedd")
                         }
+                        is Resource.Idle -> { /* NO-OP */ }
                     }
                     //_statusIsUpdated.value = Resource.Success(true)
                 }
@@ -89,6 +90,7 @@ class ResetPasswordViewModel @Inject constructor(
                 is Resource.Error -> {
                     _statusIsUpdated.value = Resource.Error(false,responseFromMainUserPasswordUseCase.message?:"Update failedd")
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

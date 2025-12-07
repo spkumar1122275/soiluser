@@ -114,6 +114,7 @@ class ProductsFragment: Fragment() {
                     binding.progressBarProducts.hide()
                     toast(requireContext(),it.message?:"Error Products",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

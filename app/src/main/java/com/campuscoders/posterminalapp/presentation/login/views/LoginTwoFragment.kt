@@ -31,16 +31,14 @@ class LoginTwoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: LoginTwoViewModel
-
     private var ftransaction: FragmentTransaction? = null
-
-    private var isAdmin: Boolean = true
+    private var isAdmin = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLoginTwoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,99 +50,115 @@ class LoginTwoFragment : Fragment() {
         ftransaction = requireActivity().supportFragmentManager.beginTransaction()
 
         getSharedPreferencesInfos()
+        initListeners()
+        observeLoginState()
+    }
+
+    private fun initListeners() {
 
         binding.card1Manager.setOnClickListener {
             clearTextFields()
             isAdmin = true
-            binding.textInputLayoutUyeNo.hint = getString(R.string.uye_isyeri_no)
-            binding.card1Manager.setCardBackgroundColor(resources.getColor(R.color.background))
-            binding.card2Cashier.setCardBackgroundColor(resources.getColor(R.color.white))
-            binding.textViewCashier.setTextColor(resources.getColor(R.color.background))
-            binding.textViewManager.setTextColor(resources.getColor(R.color.white))
+            updateUIForRole()
             getSharedPreferencesInfos()
         }
 
         binding.card2Cashier.setOnClickListener {
             clearTextFields()
             isAdmin = false
-            binding.textInputLayoutUyeNo.hint = getString(R.string.terminal_id)
-            binding.card1Manager.setCardBackgroundColor(resources.getColor(R.color.white))
-            binding.card2Cashier.setCardBackgroundColor(resources.getColor(R.color.background))
-            binding.textViewCashier.setTextColor(resources.getColor(R.color.white))
-            binding.textViewManager.setTextColor(resources.getColor(R.color.background))
+            updateUIForRole()
             getSharedPreferencesInfos()
         }
 
         binding.outlinedButtonLogin.setOnClickListener {
             if (areFieldsNotEmpty()) {
-                viewModel.controlPassword(
+                viewModel.loginOffline(
                     binding.textInputEditTextUyeNo.text.toString(),
-                    binding.textInputEditTextPassword.text.toString(),
-                    isAdmin,
-                    binding.checkBoxRememberMe.isChecked,
-                    requireContext()
+                    binding.textInputEditTextPassword.text.toString()
                 )
+
             }
         }
 
         binding.outlinedButtonForgotPassword.setOnClickListener {
             if (isAdmin) {
-                ftransaction?.let {
-                    it.setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
-                    it.replace(R.id.fragmentContainerView, ForgetPasswordFragment())
-                    it.addToBackStack(null)
-                    it.commit()
+                ftransaction?.apply {
+                    setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    replace(R.id.fragmentContainerView, ForgetPasswordFragment())
+                    addToBackStack(null)
+                    commit()
                 }
             } else {
                 toast(requireContext(), getString(R.string.cashier_forgot_password_warn), false)
             }
         }
-
-        observe()
     }
 
-    private fun observe() {
-        viewModel.statusControlPassword.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    binding.progressBarLoginTwo.hide()
-                    context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(requireActivity(), MainActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
-                        requireActivity().overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
-                    }, Constants.PROGRESS_BAR_DURATION.toLong())
-                }
-
+    private fun observeLoginState() {
+        viewModel.loginState.observe(viewLifecycleOwner) { result ->
+            when (result) {
                 is Resource.Loading -> {
                     binding.progressBarLoginTwo.show()
                 }
 
+                is Resource.Success -> {
+                    binding.progressBarLoginTwo.hide()
+                    requireContext().showProgressDialog(Constants.INFORMATIONS_VERIFYING)
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        startActivity(Intent(requireActivity(), MainActivity::class.java))
+                        requireActivity().finish()
+                    }, Constants.PROGRESS_BAR_DURATION.toLong())
+                }
+
                 is Resource.Error -> {
                     binding.progressBarLoginTwo.hide()
-                    context?.showProgressDialog(Constants.INFORMATIONS_VERIFYING)
+                    requireContext().showProgressDialog(Constants.INFORMATIONS_VERIFYING)
+
                     Handler(Looper.getMainLooper()).postDelayed({
-                        toast(requireContext(), it.message ?: "Error", false)
+                        toast(requireContext(), result.message ?: "Error", false)
                     }, Constants.PROGRESS_BAR_DURATION.toLong())
+                }
+
+                is Resource.Idle -> {
+                    /* Do nothing */
                 }
             }
         }
     }
 
+
+        private fun updateUIForRole() {
+        if (isAdmin) {
+            binding.textInputLayoutUyeNo.hint = getString(R.string.uye_isyeri_no)
+            binding.card1Manager.setCardBackgroundColor(resources.getColor(R.color.background))
+            binding.card2Cashier.setCardBackgroundColor(resources.getColor(R.color.white))
+            binding.textViewCashier.setTextColor(resources.getColor(R.color.background))
+            binding.textViewManager.setTextColor(resources.getColor(R.color.white))
+        } else {
+            binding.textInputLayoutUyeNo.hint = getString(R.string.terminal_id)
+            binding.card1Manager.setCardBackgroundColor(resources.getColor(R.color.white))
+            binding.card2Cashier.setCardBackgroundColor(resources.getColor(R.color.background))
+            binding.textViewCashier.setTextColor(resources.getColor(R.color.white))
+            binding.textViewManager.setTextColor(resources.getColor(R.color.background))
+        }
+    }
+
     private fun getSharedPreferencesInfos() {
+        val prefs = CustomSharedPreferences(requireContext())
         binding.checkBoxRememberMe.isChecked = false
-        val customSharedPreferences = CustomSharedPreferences(requireContext())
-        val manager = customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_remember_me_manager)] as Boolean
-        val cashier = customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_remember_me_terminal)] as Boolean
-        if (manager && isAdmin) {
+
+        val managerRemember = prefs.getMainUserLogin(requireContext())[getString(R.string.user_remember_me_manager)] as Boolean
+        val cashierRemember = prefs.getMainUserLogin(requireContext())[getString(R.string.user_remember_me_terminal)] as Boolean
+
+        if (managerRemember && isAdmin) {
             binding.checkBoxRememberMe.isChecked = true
-            binding.textInputEditTextUyeNo.setText(customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_store_no)].toString())
-            binding.textInputEditTextPassword.setText(customSharedPreferences.getMainUserLogin(requireContext())[requireContext().getString(R.string.user_password)].toString())
-        } else if (cashier && !(isAdmin)) {
+            binding.textInputEditTextUyeNo.setText(prefs.getMainUserLogin(requireContext())[getString(R.string.user_store_no)].toString())
+            binding.textInputEditTextPassword.setText(prefs.getMainUserLogin(requireContext())[getString(R.string.user_password)].toString())
+        } else if (cashierRemember && !isAdmin) {
             binding.checkBoxRememberMe.isChecked = true
-            binding.textInputEditTextUyeNo.setText(customSharedPreferences.getTerminalUserLogin(requireContext())[requireContext().getString(R.string.user_terminal_id)].toString())
-            binding.textInputEditTextPassword.setText(customSharedPreferences.getTerminalUserLogin(requireContext())[requireContext().getString(R.string.user_password)].toString())
+            binding.textInputEditTextUyeNo.setText(prefs.getTerminalUserLogin(requireContext())[getString(R.string.user_terminal_id)].toString())
+            binding.textInputEditTextPassword.setText(prefs.getTerminalUserLogin(requireContext())[getString(R.string.user_password)].toString())
         }
     }
 
@@ -154,11 +168,12 @@ class LoginTwoFragment : Fragment() {
     }
 
     private fun areFieldsNotEmpty(): Boolean {
-        if (binding.textInputEditTextUyeNo.text.toString() == "" || binding.textInputEditTextPassword.text.toString() == "") {
+        return if (binding.textInputEditTextUyeNo.text.isNullOrEmpty() ||
+            binding.textInputEditTextPassword.text.isNullOrEmpty()
+        ) {
             toast(requireContext(), getString(R.string.empty_fields), false)
-            return false
-        }
-        return true
+            false
+        } else true
     }
 
     override fun onDestroyView() {

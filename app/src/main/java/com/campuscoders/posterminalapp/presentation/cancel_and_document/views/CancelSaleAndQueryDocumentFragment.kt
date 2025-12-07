@@ -111,6 +111,7 @@ class CancelSaleAndQueryDocumentFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

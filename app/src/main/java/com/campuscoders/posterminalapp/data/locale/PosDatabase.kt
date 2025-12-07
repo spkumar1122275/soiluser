@@ -13,12 +13,14 @@ import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 import com.campuscoders.posterminalapp.domain.model.Company
 import com.campuscoders.posterminalapp.domain.model.License
 import com.campuscoders.posterminalapp.domain.model.Department
+import com.campuscoders.posterminalapp.domain.model.TerminalUserLicense
 import com.campuscoders.posterminalapp.utils.Converters
 
 
 @Database(
-    entities = [ Company::class, License::class, Department::class, MainUser::class, TerminalUsers::class, Products::class, Orders::class, OrdersProducts::class, Customers::class, Categories::class],
-    version = 1)
+    entities = [ Company::class, License::class, Department::class, MainUser::class, TerminalUsers::class, Products::class, Orders::class, OrdersProducts::class, Customers::class, Categories::class, TerminalUserLicense::class],
+    version = 1,
+    exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class PosDatabase: RoomDatabase() {
 
@@ -35,4 +37,5 @@ abstract class PosDatabase: RoomDatabase() {
     abstract fun ordersDao(): OrdersDao
     abstract fun customersDao(): CustomersDao
     abstract fun ordersProductsDao(): OrdersProductsDao
+    abstract fun terminalUserLicenseDao(): TerminalUserLicenseDao
 }

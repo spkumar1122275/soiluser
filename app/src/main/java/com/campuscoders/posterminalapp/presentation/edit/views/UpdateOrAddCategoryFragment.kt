@@ -97,6 +97,7 @@ class UpdateOrAddCategoryFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusAddCategory.observe(viewLifecycleOwner) {
@@ -111,6 +112,7 @@ class UpdateOrAddCategoryFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusUpdateCategory.observe(viewLifecycleOwner) {
@@ -125,6 +127,7 @@ class UpdateOrAddCategoryFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

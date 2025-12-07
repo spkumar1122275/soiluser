@@ -86,6 +86,7 @@ class CashierFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusDeleteCashier.observe(viewLifecycleOwner) {
@@ -99,6 +100,7 @@ class CashierFragment : Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:"Error",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

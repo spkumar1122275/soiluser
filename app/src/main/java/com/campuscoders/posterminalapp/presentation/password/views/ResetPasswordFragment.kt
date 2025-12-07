@@ -80,6 +80,7 @@ class ResetPasswordFragment : Fragment() {
                     binding.progressBarResetPassword.hide()
                     toast(requireContext(), it.message ?: "failed!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.timer.observe(viewLifecycleOwner) {

@@ -72,6 +72,7 @@ class ForgetPasswordFragment : Fragment() {
                     binding.progressBarForgetPassword.hide()
                     toast(requireContext(),it.message?:"ERROR!",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

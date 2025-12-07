@@ -1,18 +1,24 @@
 package com.campuscoders.posterminalapp.domain.use_case.password
 
-import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
+import com.campuscoders.posterminalapp.domain.repository.AuthRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
-class FetchMainUserCellPhoneNumberUseCase @Inject constructor(private val repository: LoginRepository) {
-    suspend fun executeFetchMainUserCellPhoneNumber(taxId: String): Resource<String> {
+
+
+class FetchMainUserCellPhoneNumberUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    suspend fun execute(taxId: String): Resource<String> {
         return try {
-            val response = repository.fetchMainUserCellPhoneNumber(taxId)
-            response?.let {
-                return@let Resource.Success(it)
-            } ?: Resource.Error(null,"TCKN/VKN Hatalı!")
+            val phone = authRepository.fetchMainUserCellPhoneNumber(taxId)
+            if (phone.isNullOrEmpty()) {
+                Resource.Error(null, "Telefon numarası bulunamadı")
+            } else {
+                Resource.Success(phone)
+            }
         } catch (e: Exception) {
-            Resource.Error(null,e.localizedMessage?:"Error catched! (executeFetchMainUserCellPhoneNumber)")
+            Resource.Error(null, e.localizedMessage ?: "Beklenmeyen hata")
         }
     }
 }

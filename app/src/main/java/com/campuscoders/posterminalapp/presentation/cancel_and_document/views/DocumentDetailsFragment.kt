@@ -106,6 +106,7 @@ class DocumentDetailsFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:requireActivity().getString(R.string.couldnt_get_order),false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusProductAndTaxPrice.observe(viewLifecycleOwner) {
@@ -119,6 +120,7 @@ class DocumentDetailsFragment: Fragment() {
                 is Resource.Error -> {
                     toast(requireContext(),it.message?:requireActivity().getString(R.string.couldnt_get_order),false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }
@@ -171,6 +173,7 @@ class DocumentDetailsFragment: Fragment() {
                     imageViewCheckCost.setImageDrawable(resources.getDrawable(R.drawable.checkerror))
                     imageViewCheckProcess.setImageDrawable(resources.getDrawable(R.drawable.checkerror))
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
 

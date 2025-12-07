@@ -1,11 +1,11 @@
 package com.campuscoders.posterminalapp.domain.use_case.login
 
 import com.campuscoders.posterminalapp.data.remote.dto.LoginResponse
-import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
+import com.campuscoders.posterminalapp.domain.repository.AuthRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
-class LoginWithApiUseCase @Inject constructor(private val repository: LoginRepository) {
+class LoginWithApiUseCase @Inject constructor(private val repository: AuthRepository) {
     suspend fun executeLoginWithApi(
         terminalId: String,
         taxId: String,
@@ -13,14 +13,14 @@ class LoginWithApiUseCase @Inject constructor(private val repository: LoginRepos
         password: String
     ): Resource<LoginResponse> {
         return try {
-            val response = repository.loginWithApi(terminalId, taxId, memberId, password)
-            if (response.isSuccessful && response.body() != null) {
-                Resource.Success(response.body()!!)
+            val result = repository.loginOnline(terminalId, taxId, memberId, password)
+            if (result.isSuccess) {
+                Resource.Success(result.getOrThrow())
             } else {
-                Resource.Error(null, response.message() ?: "Login failed")
+                Resource.Error(null, result.exceptionOrNull()?.message ?: "Login failed")
             }
         } catch (e: Exception) {
-            Resource.Error(null, e.localizedMessage ?: "Network error occurred")
+            Resource.Error(null, e.localizedMessage ?: "An unexpected error occurred")
         }
     }
 }

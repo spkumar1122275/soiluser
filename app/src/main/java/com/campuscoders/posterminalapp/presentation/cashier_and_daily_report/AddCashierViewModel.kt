@@ -34,7 +34,7 @@ class AddCashierViewModel @Inject constructor(
     val statusLastTerminalUserId: LiveData<Resource<Int>>
         get() = _statusLastTerminalUserId
 
-    fun getTerminalUser(terminalId: String) {
+    fun getTerminalUser(terminalId: Int) {
         _statusFetchedTerminalUser.value = Resource.Loading(null)
         viewModelScope.launch {
             val response = fetchTerminalUserByIdUseCase.executeFetchTerminalUserById(terminalId)

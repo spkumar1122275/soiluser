@@ -9,11 +9,13 @@ import com.campuscoders.posterminalapp.domain.model.TerminalUsers
 
 @Dao
 interface TerminalUsersDao {
-    @Insert
+
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTerminalUser(terminalUsers: TerminalUsers): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(users: List<TerminalUsers>)
+
     @Query("SELECT * FROM TerminalUsers WHERE terminal_user_terminal_id = :terminalId")
     suspend fun queryTerminalUser(terminalId: String): TerminalUsers?
 
@@ -27,7 +29,7 @@ interface TerminalUsersDao {
     suspend fun updateTerminalUserPassword(taxId: String, newPassword: String): Int
 
     @Query("DELETE FROM TerminalUsers WHERE terminalUserId = :terminalId")
-    suspend fun deleteTerminalUser(terminalId: Int): Int
+    suspend fun deleteTerminalUser(terminalId: Int): Int   // ✅ FIXED
 
     @Query("DELETE FROM TerminalUsers WHERE terminal_user_store_id = :storeId")
     suspend fun deleteByStoreId(storeId: Int)
@@ -36,10 +38,10 @@ interface TerminalUsersDao {
     suspend fun queryAllTerminalUsers(): List<TerminalUsers>?
 
     @Query("SELECT terminalUserId FROM TerminalUsers ORDER BY terminalUserId DESC LIMIT 1")
-    suspend fun queryLastInsertedTerminalUsers(): Int?
+    suspend fun queryLastInsertedTerminalUser(): Int?
 
     @Query("SELECT * FROM TerminalUsers WHERE terminalUserId = :terminalId")
-    suspend fun queryTerminalUserById(terminalId: String): TerminalUsers?
+    suspend fun queryTerminalUserById(terminalId: Int): TerminalUsers?   // ✅ FIXED
 
     @Update
     suspend fun updateTerminalUser(terminalUser: TerminalUsers): Int

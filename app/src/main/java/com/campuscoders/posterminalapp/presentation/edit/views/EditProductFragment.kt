@@ -148,6 +148,7 @@ class EditProductFragment : Fragment() {
                     binding.progressBarEditProduct.hide()
                     toast(requireContext(), it.message ?: "Error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusDeleteProducts.observe(viewLifecycleOwner) {
@@ -164,6 +165,7 @@ class EditProductFragment : Fragment() {
                     binding.progressBarEditProduct.hide()
                     toast(requireContext(), it.message ?: "Error!", false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

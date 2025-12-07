@@ -129,6 +129,7 @@ class EditCategoryFragment: Fragment() {
                     binding.progressBarCategories.hide()
                     toast(requireContext(),it.message?:"Error Categories",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
         viewModel.statusDeleteCategory.observe(viewLifecycleOwner) {
@@ -145,6 +146,7 @@ class EditCategoryFragment: Fragment() {
                     binding.progressBarCategories.hide()
                     toast(requireContext(),it.message?:"Error Categories",false)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }

@@ -12,13 +12,20 @@ import androidx.room.Relation
     tableName = "TerminalUsers",
     foreignKeys = [
         ForeignKey(
+            entity = Company::class,
+            parentColumns = ["store_id"],
+            childColumns = ["terminal_user_store_id"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
             entity = Department::class,
             parentColumns = ["dept_id"],
             childColumns = ["terminal_dept_id"],
             onDelete = ForeignKey.CASCADE
         )
+
     ],
-    indices = [Index(value = ["terminal_dept_id"])]
+    indices = [Index(value = ["terminal_dept_id"]), Index(value = ["terminal_user_store_id"])]
 )
 
 data class TerminalUsers(

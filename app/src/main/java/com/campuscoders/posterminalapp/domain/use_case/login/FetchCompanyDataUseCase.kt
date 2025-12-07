@@ -1,8 +1,9 @@
 package com.campuscoders.posterminalapp.domain.use_case.login
 
 import com.campuscoders.posterminalapp.domain.repository.CompanyRepository
+import javax.inject.Inject
 
-class FetchCompanyDataUseCase(
+class FetchCompanyDataUseCase @Inject constructor(
     private val repository: CompanyRepository
 ) {
 

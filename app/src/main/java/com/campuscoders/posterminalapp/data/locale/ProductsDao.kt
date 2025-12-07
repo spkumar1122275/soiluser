@@ -2,6 +2,7 @@ package com.campuscoders.posterminalapp.data.locale
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.campuscoders.posterminalapp.domain.model.Products
@@ -9,10 +10,10 @@ import com.campuscoders.posterminalapp.domain.model.Products
 @Dao
 interface ProductsDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllProducts(vararg products: Products): List<Long>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(product: Products): Long
 
     @Query("SELECT * FROM Products")

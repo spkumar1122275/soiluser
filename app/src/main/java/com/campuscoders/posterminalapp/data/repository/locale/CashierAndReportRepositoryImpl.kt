@@ -21,10 +21,11 @@ class CashierAndReportRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchLastTerminalUserId(): Int? {
-        return terminalUsersDao.queryLastInsertedTerminalUsers()
+        return terminalUsersDao.queryLastInsertedTerminalUser()
     }
 
-    override suspend fun fetchTerminalUserById(terminalId: String): TerminalUsers? {
+
+    override suspend fun fetchTerminalUserById(terminalId: Int): TerminalUsers? {
         return terminalUsersDao.queryTerminalUserById(terminalId)
     }
 

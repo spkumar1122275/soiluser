@@ -2,6 +2,7 @@ package com.campuscoders.posterminalapp.data.locale
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.campuscoders.posterminalapp.domain.model.Categories
@@ -9,10 +10,10 @@ import com.campuscoders.posterminalapp.domain.model.Categories
 @Dao
 interface CategoriesDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllCategories(vararg categories: Categories): List<Long>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: Categories): Long
 
     @Query("SELECT * FROM Categories")

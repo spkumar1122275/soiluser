@@ -2,9 +2,13 @@ package com.campuscoders.posterminalapp.presentation.login
 
 import android.content.Context
 import androidx.lifecycle.*
-import com.campuscoders.posterminalapp.domain.model.MainUser
+import com.campuscoders.posterminalapp.R
+import com.campuscoders.posterminalapp.di.SecurityUtils
+import com.campuscoders.posterminalapp.domain.model.LoginParams
+import com.campuscoders.posterminalapp.domain.model.LoginResult
 import com.campuscoders.posterminalapp.domain.use_case.login.HandleLoginUseCase
-import com.campuscoders.posterminalapp.utils.*
+import com.campuscoders.posterminalapp.utils.CustomSharedPreferences
+import com.campuscoders.posterminalapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -40,22 +44,49 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun handleLogin(mainUser: MainUser) {
+    fun handleLogin(terminalId: String, taxId: String, storeId: String, password: String) {
         _loginStatus.value = Resource.Loading(null)
+
         viewModelScope.launch {
-            val result: Resource<LoginResult> = handleLoginUseCase(mainUser)
+            val hashedPassword = SecurityUtils.hashPasswordSHA256(password)
+
+            val loginParams = LoginParams(
+                terminalId = terminalId,
+                taxId = taxId,
+                storeId = storeId,
+                password = hashedPassword
+            )
+
+            val result = handleLoginUseCase(loginParams)
             _loginStatus.postValue(result)
+
+            // ✅ Save credentials AFTER successful login if "Remember Me" is on
+            if (result is Resource.Success && _rememberMeChecked.value == true) {
+                prefs.setMainUserLogin(
+                    terminalId = terminalId,
+                    taxId = taxId,
+                    memberStoreId = storeId,
+                    password = password, // Save the plain text password
+                    context = appContext
+                )
+            }
         }
     }
+
 
     fun updateRememberMeState(isChecked: Boolean) {
         prefs.setControl(isChecked)
         _rememberMeChecked.value = isChecked
+
+        // ✅ If "Remember Me" is turned off, clear the saved credentials
+        if (!isChecked) {
+            prefs.setMainUserLogin("", "", "", "", appContext)
+        }
     }
 }
 
 // ✅ helper extension to clean nulls
-private fun HashMap<String, Any>.mapNotNullValues(): Map<String, String> =
-    mapNotNull { (k, v) ->
+private fun HashMap<String, Any>.mapNotNullValues(): Map<String, String> = 
+    mapNotNull { (k, v) -> 
         (v as? String)?.takeIf { it != "null" }?.let { k to it }
     }.toMap()

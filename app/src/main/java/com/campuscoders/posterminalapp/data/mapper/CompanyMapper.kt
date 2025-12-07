@@ -50,18 +50,17 @@ fun ApiLicense.toLicenseEntity(storeId: Int): License {
 ---------------------------------------------------------- */
 
 fun ApiCompany.toDepartmentEntities(): List<Department> {
-    return departments?.map { it.toDepartmentEntity(id) } ?: emptyList()
+    return departments?.map { it.toDepartmentEntity(store_id) } ?: emptyList()
 }
 
-fun ApiDepartment.toDepartmentEntity(companyId: Int): Department {
+fun ApiDepartment.toDepartmentEntity(storeId: Int): Department {
     return Department(
-        deptId = dept_id,        // Removed the unnecessary elvis operator '?: ""'
+        deptId = dept_id,
         deptName = dept_name,
-        // Removed the unnecessary elvis operator '?: ""'
         deptLocation = dept_location,
-        deptStoreId = companyId,
-        mainUsers = mainUsers?.map { it.toMainUserEntity(dept_id) } ?: emptyList(),
-        terminalUsers = terminalUsers?.map { it.toTerminalUserEntity(dept_id) } ?: emptyList()
+        deptStoreId = storeId,
+        mainUsers = emptyList(),
+        terminalUsers = emptyList()
     )
 }
 
@@ -72,22 +71,24 @@ fun ApiDepartment.toDepartmentEntity(companyId: Int): Department {
 
 fun ApiCompany.toMainUserEntities(): List<MainUser> {
     return departments?.flatMap { dept ->
-        dept.mainUsers?.map { it.toMainUserEntity(dept.dept_id) } ?: emptyList()
+        dept.mainUsers?.map { it.toMainUserEntity(dept.dept_id, store_id) } ?: emptyList()
     } ?: emptyList()
 }
 
-fun ApiMainUser.toMainUserEntity(departmentId: Int): MainUser {
+fun ApiMainUser.toMainUserEntity(departmentId: Int, storeId: Int): MainUser {
     return MainUser(
         mainUserEmpNo = emp_no ?: 0,
         mainUserTerminalId = terminal_id ?: "",
         mainUserDepartmentId = departmentId,
+        mainUserStoreId = storeId.toString(),
         mainUserTaxId = pan ?: "",
         mainUserPassword = password ?: "",
         mainUserFirstName = first_name ?: "",
         mainUserLastName = last_name ?: "",
         mainUserCellphoneNumber = cellphone_number ?: "",
         mainUserRole = role ?: "",
-        mainUserIsAdmin = is_admin ?: false
+        mainUserIsAdmin = is_admin ?: false,
+        mainUserIsActive = null
     )
 }
 
@@ -97,21 +98,37 @@ fun ApiMainUser.toMainUserEntity(departmentId: Int): MainUser {
 
 fun ApiCompany.toTerminalUserEntities(): List<TerminalUsers> {
     return departments?.flatMap { dept ->
-        dept.terminalUsers?.map { it.toTerminalUserEntity(dept.dept_id) } ?: emptyList()
+        dept.terminalUsers?.map { it.toTerminalUserEntity(dept.dept_id, store_id) } ?: emptyList()
     } ?: emptyList()
 }
 
-fun ApiTerminalUser.toTerminalUserEntity(departmentId: Int): TerminalUsers {
+fun ApiTerminalUser.toTerminalUserEntity(departmentId: Int, storeId: Int): TerminalUsers {
     return TerminalUsers(
-        terminalUserempNo = emp_no ?: 0,
+        terminalUserempNo = emp_no,
         terminalUserDeptId = departmentId,
-        terminalUserTerminalId = terminal_id ?: "",
-        terminalUsertaxId = pan ?: "",
-        terminalUserPassword = password ?: "",
-        terminalUserfirstName = first_name ?: "",
-        terminalUserlastName = last_name ?: "",
-        terminalUserphoneNumber = cellphone_number ?: "",
-        terminalUserrole = role ?: ""
+        terminalUserStoreId = storeId.toString(),
+        terminalUserTerminalId = terminal_id,
+        terminalUsertaxId = pan,
+        terminalUserPassword = password,
+        terminalUserfirstName = first_name,
+        terminalUserlastName = last_name,
+        terminalUserphoneNumber = cellphone_number,
+        terminalUserrole = role,
+        terminalUserFullName = "${first_name ?: ""} ${last_name ?: ""}",
+        canCancelRefund = null,
+        canCollectPayment = null,
+        canViewCashiers = null,
+        canAddEditCashiers = null,
+        canDeleteCashiers = null,
+        canViewProducts = null,
+        canAddEditProducts = null,
+        canDeleteProducts = null,
+        canViewAllReports = null,
+        canSaveSendReports = null,
+        canManagePos = null,
+        terminalUserAdmin = null,
+        terminalUserDate = null,
+        terminalUserTime = null
     )
 }
 

@@ -11,8 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.campuscoders.posterminalapp.R
 import com.campuscoders.posterminalapp.databinding.FragmentLoginBinding
-import com.campuscoders.posterminalapp.di.SecurityUtils
-import com.campuscoders.posterminalapp.domain.model.MainUser
 import com.campuscoders.posterminalapp.presentation.login.LoginViewModel
 import com.campuscoders.posterminalapp.utils.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +23,6 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: LoginViewModel by viewModels()
-    private lateinit var prefs: CustomSharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +30,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        prefs = CustomSharedPreferences(requireContext())
         return binding.root
     }
 
@@ -61,15 +57,8 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val mainUser = MainUser(
-                mainUserTerminalId = terminalId,
-                mainUserTaxId = taxId,
-                mainUserStoreId = memberStore,
-                mainUserPassword = password
-            )
-
             lifecycleScope.launch {
-                viewModel.handleLogin(mainUser)
+                viewModel.handleLogin(terminalId, taxId, memberStore, password)
             }
         }
     }
@@ -123,6 +112,7 @@ class LoginFragment : Fragment() {
                     binding.loginButton.isEnabled = true
                     toast(requireContext(), result.message ?: "Login failed", true)
                 }
+                is Resource.Idle -> { /* NO-OP */ }
             }
         }
     }
@@ -135,6 +125,7 @@ class LoginFragment : Fragment() {
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragmentContainerView, VerificationFragment())
                 .commitAllowingStateLoss()
+            // TODO: Navigate to the actual main dashboard
         }, Constants.PROGRESS_BAR_DURATION.toLong())
     }
 
@@ -146,6 +137,7 @@ class LoginFragment : Fragment() {
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragmentContainerView, VerificationFragment())
                 .commitAllowingStateLoss()
+            // TODO: Navigate to the actual terminal dashboard
         }, Constants.PROGRESS_BAR_DURATION.toLong())
     }
 
@@ -154,4 +146,3 @@ class LoginFragment : Fragment() {
         _binding = null
     }
 }
-

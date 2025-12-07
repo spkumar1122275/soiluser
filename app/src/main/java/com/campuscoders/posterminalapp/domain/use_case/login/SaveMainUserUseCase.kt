@@ -1,11 +1,11 @@
 package com.campuscoders.posterminalapp.domain.use_case.login
 
 import com.campuscoders.posterminalapp.domain.model.MainUser
-import com.campuscoders.posterminalapp.domain.repository.locale.LoginRepository
+import com.campuscoders.posterminalapp.domain.repository.AuthRepository
 import com.campuscoders.posterminalapp.utils.Resource
 import javax.inject.Inject
 
-class SaveMainUserUseCase @Inject constructor(private val repository: LoginRepository) {
+class SaveMainUserUseCase @Inject constructor(private val repository: AuthRepository) {
     suspend fun executeSaveMainUser(mainUser: MainUser): Resource<Boolean> {
         return try {
             val response = repository.saveMainUserToDatabase(mainUser)
